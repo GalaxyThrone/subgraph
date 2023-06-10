@@ -22,6 +22,8 @@ dataSources:
       abis:
         - name: PlanetContract
           file: PlanetContract\abis\PlanetContract.json
+        - name: DiamondContract
+          file: PlanetContract\abis\DiamondContract.json
       file: PlanetContract\PlanetContract.wasm
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)

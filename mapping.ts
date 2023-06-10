@@ -12,13 +12,24 @@ import {
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 
 export function handleGenesis(event: GENESIS): void {
+  updatePlanets(event.address);
+}
+
+export function handleTransfer(event: Transfer): void {
+  let contractAddress = Address.fromString(
+    "0x90e01831D96f8aaE0f9f4ec0fFb399aC789A4c97"
+  );
+  updatePlanets(contractAddress);
+}
+
+function updatePlanets(contractAddress: Address): void {
   let planetContractAddress =
     "0x42ae07ee09001ABcE5372F75d0E12f9B31957149"; // Replace with the correct address
 
   let planetContract = PlanetContract.bind(
     Address.fromString(planetContractAddress)
   );
-  let diamondContract = DiamondContract.bind(event.address);
+  let diamondContract = DiamondContract.bind(contractAddress);
 
   let planetsTotalSupply = planetContract.totalSupply();
 
@@ -66,8 +77,4 @@ export function handleGenesis(event: GENESIS): void {
     planet.planetResourcesAvailable = planetResourcesAvailable.id;
     planet.save();
   }
-}
-
-export function handleTransfer(event: Transfer): void {
-  // Do nothing for now
 }
