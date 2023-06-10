@@ -2,7 +2,7 @@ type Planet @entity {
   id: ID!
   planetType: Int!
   planetResourcesUnmined: PlanetResource!
-  planetResourcesAvailable: [PlanetResourceAvailable!]!
+  planetResourcesAvailable: PlanetResourceAvailable!
   ownerOfPlanet: String!
   pvpEnabled: Boolean
 }
@@ -16,7 +16,7 @@ type PlanetResource @entity {
 
 type PlanetResourceAvailable @entity {
   id: ID!
-  planet: Planet!
-  type: String!
-  amount: BigInt!
+  antimatter: BigInt!
+  metal: BigInt!
+  crystal: BigInt!
 }

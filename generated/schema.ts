@@ -76,17 +76,17 @@ export class Planet extends Entity {
     this.set("planetResourcesUnmined", Value.fromString(value));
   }
 
-  get planetResourcesAvailable(): Array<string> {
+  get planetResourcesAvailable(): string {
     let value = this.get("planetResourcesAvailable");
     if (!value || value.kind == ValueKind.NULL) {
       throw new Error("Cannot return null for a required field.");
     } else {
-      return value.toStringArray();
+      return value.toString();
     }
   }
 
-  set planetResourcesAvailable(value: Array<string>) {
-    this.set("planetResourcesAvailable", Value.fromStringArray(value));
+  set planetResourcesAvailable(value: string) {
+    this.set("planetResourcesAvailable", Value.fromString(value));
   }
 
   get ownerOfPlanet(): string {
@@ -243,34 +243,8 @@ export class PlanetResourceAvailable extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get planet(): string {
-    let value = this.get("planet");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
-  }
-
-  set planet(value: string) {
-    this.set("planet", Value.fromString(value));
-  }
-
-  get type(): string {
-    let value = this.get("type");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
-  }
-
-  set type(value: string) {
-    this.set("type", Value.fromString(value));
-  }
-
-  get amount(): BigInt {
-    let value = this.get("amount");
+  get antimatter(): BigInt {
+    let value = this.get("antimatter");
     if (!value || value.kind == ValueKind.NULL) {
       throw new Error("Cannot return null for a required field.");
     } else {
@@ -278,7 +252,33 @@ export class PlanetResourceAvailable extends Entity {
     }
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set antimatter(value: BigInt) {
+    this.set("antimatter", Value.fromBigInt(value));
+  }
+
+  get metal(): BigInt {
+    let value = this.get("metal");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set metal(value: BigInt) {
+    this.set("metal", Value.fromBigInt(value));
+  }
+
+  get crystal(): BigInt {
+    let value = this.get("crystal");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set crystal(value: BigInt) {
+    this.set("crystal", Value.fromBigInt(value));
   }
 }

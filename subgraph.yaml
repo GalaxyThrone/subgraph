@@ -10,6 +10,7 @@ dataSources:
     source:
       address: "0x42ae07ee09001ABcE5372F75d0E12f9B31957149"
       abi: PlanetContract
+      startBlock: 36683271
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -31,6 +32,7 @@ dataSources:
     source:
       address: "0x90e01831D96f8aaE0f9f4ec0fFb399aC789A4c97"
       abi: DiamondContract
+      startBlock: 36683271
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -42,6 +44,8 @@ dataSources:
       abis:
         - name: DiamondContract
           file: ./abis/DiamondContract.json
+        - name: PlanetContract # Added this line
+          file: ./abis/PlanetContract.json # And this line
       eventHandlers: # <-- Add this section
         - event: GENESIS() # The event signature
           handler: handleGenesis # The event handler function in mapping.ts

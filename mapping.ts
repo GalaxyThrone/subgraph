@@ -9,10 +9,15 @@ import {
   PlanetResource,
   PlanetResourceAvailable,
 } from "./generated/schema";
-import { BigInt } from "@graphprotocol/graph-ts";
+import { Address, BigInt } from "@graphprotocol/graph-ts";
 
 export function handleGenesis(event: GENESIS): void {
-  let planetContract = PlanetContract.bind(event.address);
+  let planetContractAddress =
+    "0x42ae07ee09001ABcE5372F75d0E12f9B31957149"; // Replace with the correct address
+
+  let planetContract = PlanetContract.bind(
+    Address.fromString(planetContractAddress)
+  );
   let diamondContract = DiamondContract.bind(event.address);
 
   let planetsTotalSupply = planetContract.totalSupply();
@@ -50,25 +55,15 @@ export function handleGenesis(event: GENESIS): void {
 
     planet.planetResourcesUnmined = planetResourcesUnmined.id;
 
-    for (let j = 0; j < resources.length; j++) {
-      let planetResourceAvailable = new PlanetResourceAvailable(
-        (i + 1).toString() + "-" + j.toString()
-      );
-      planetResourceAvailable.planet = planet.id;
-      planetResourceAvailable.type = [
-        "antimatter",
-        "metal",
-        "crystal",
-      ][j];
-      planetResourceAvailable.amount = resources[j];
-      planetResourceAvailable.save();
+    let planetResourcesAvailable = new PlanetResourceAvailable(
+      (i + 1).toString()
+    );
+    planetResourcesAvailable.metal = resources[0];
+    planetResourcesAvailable.crystal = resources[1];
+    planetResourcesAvailable.antimatter = resources[2];
+    planetResourcesAvailable.save();
 
-      planet.planetResourcesAvailable =
-        planet.planetResourcesAvailable.concat([
-          planetResourceAvailable.id,
-        ]);
-    }
-
+    planet.planetResourcesAvailable = planetResourcesAvailable.id;
     planet.save();
   }
 }
