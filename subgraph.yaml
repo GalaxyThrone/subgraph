@@ -1,0 +1,48 @@
+specVersion: 0.0.4
+description: A subgraph for the on-chain game
+repository: https://github.com/GalaxyThrone/contracts
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: PlanetContract
+    network: mumbai
+    source:
+      address: "0x42ae07ee09001ABcE5372F75d0E12f9B31957149"
+      abi: PlanetContract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Planet
+        - PlanetResource
+        - PlanetResourceAvailable
+      abis:
+        - name: PlanetContract
+          file: ./abis/PlanetContract.json
+      file: ./mapping.ts
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256) # This is just an example, replace with an actual event from PlanetContract
+          handler: handleTransfer # You will also need to create this handler in your mapping.ts file
+  - kind: ethereum/contract
+    name: DiamondContract
+    network: mumbai
+    source:
+      address: "0x90e01831D96f8aaE0f9f4ec0fFb399aC789A4c97"
+      abi: DiamondContract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Planet
+        - PlanetResource
+        - PlanetResourceAvailable
+      abis:
+        - name: DiamondContract
+          file: ./abis/DiamondContract.json
+      eventHandlers: # <-- Add this section
+        - event: GENESIS() # The event signature
+          handler: handleGenesis # The event handler function in mapping.ts
+      file: ./mapping.ts

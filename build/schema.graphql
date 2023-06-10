@@ -1,0 +1,22 @@
+type Planet @entity {
+  id: ID!
+  planetType: Int!
+  planetResourcesUnmined: PlanetResource!
+  planetResourcesAvailable: [PlanetResourceAvailable!]!
+  ownerOfPlanet: String!
+  pvpEnabled: Boolean
+}
+
+type PlanetResource @entity {
+  id: ID!
+  antimatter: BigInt!
+  metal: BigInt!
+  crystal: BigInt!
+}
+
+type PlanetResourceAvailable @entity {
+  id: ID!
+  planet: Planet!
+  type: String!
+  amount: BigInt!
+}
