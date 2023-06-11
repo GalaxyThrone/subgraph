@@ -15,7 +15,9 @@ import {
 } from "./generated/schema";
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 
-export function handleNewPlayer(event: playerRegistered): void {
+export function handlePlayerRegistered(
+  event: playerRegistered
+): void {
   let player = new Player(event.params.playerAddress.toHexString());
   player.address = event.params.playerAddress.toHexString();
   player.faction = event.params.faction;
