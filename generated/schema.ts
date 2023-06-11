@@ -75,6 +75,10 @@ export class Player extends Entity {
   set faction(value: BigInt) {
     this.set("faction", Value.fromBigInt(value));
   }
+
+  get planets(): PlanetLoader {
+    return new PlanetLoader("Player", this.get("id")!.toString(), "planets");
+  }
 }
 
 export class Planet extends Entity {
@@ -155,17 +159,21 @@ export class Planet extends Entity {
     this.set("planetResourcesAvailable", Value.fromString(value));
   }
 
-  get ownerOfPlanet(): string {
-    let value = this.get("ownerOfPlanet");
+  get owner(): string | null {
+    let value = this.get("owner");
     if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
+      return null;
     } else {
       return value.toString();
     }
   }
 
-  set ownerOfPlanet(value: string) {
-    this.set("ownerOfPlanet", Value.fromString(value));
+  set owner(value: string | null) {
+    if (!value) {
+      this.unset("owner");
+    } else {
+      this.set("owner", Value.fromString(<string>value));
+    }
   }
 
   get pvpEnabled(): boolean {
@@ -346,5 +354,23 @@ export class PlanetResourceAvailable extends Entity {
 
   set crystal(value: BigInt) {
     this.set("crystal", Value.fromBigInt(value));
+  }
+}
+
+export class PlanetLoader extends Entity {
+  _entity: string;
+  _field: string;
+  _id: string;
+
+  constructor(entity: string, id: string, field: string) {
+    super();
+    this._entity = entity;
+    this._id = id;
+    this._field = field;
+  }
+
+  load(): Planet[] {
+    let value = store.loadRelated(this._entity, this._id, this._field);
+    return changetype<Planet[]>(value);
   }
 }

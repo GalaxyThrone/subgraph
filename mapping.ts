@@ -47,6 +47,7 @@ function updatePlanets(contractAddress: Address): void {
   for (let i = 0; i < planetsTotalSupply.toI32(); i++) {
     let planetData = planetContract.planets(BigInt.fromI32(i + 1));
     let owner = planetContract.ownerOf(BigInt.fromI32(i + 1));
+
     let resources = [
       diamondContract.getPlanetResources(
         BigInt.fromI32(i + 1),
@@ -63,8 +64,13 @@ function updatePlanets(contractAddress: Address): void {
     ];
 
     let planet = new Planet((i + 1).toString());
+
     planet.planetType = planetData.getPlanetType().toI32();
-    planet.ownerOfPlanet = owner.toHex();
+
+    let player = Player.load(owner.toHex());
+    if (player !== null) {
+      planet.owner = player.id; // assign the string ID
+    }
     planet.pvpEnabled = planetData.getPvpEnabled();
 
     let planetResourcesUnmined = new PlanetResource(

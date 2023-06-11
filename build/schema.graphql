@@ -2,6 +2,7 @@ type Player @entity {
   id: ID!
   address: String!
   faction: BigInt!
+  planets: [Planet!]! @derivedFrom(field: "owner")
 }
 
 type Planet @entity {
@@ -9,7 +10,7 @@ type Planet @entity {
   planetType: Int!
   planetResourcesUnmined: PlanetResource!
   planetResourcesAvailable: PlanetResourceAvailable!
-  ownerOfPlanet: String!
+  owner: Player
   pvpEnabled: Boolean
 }
 
