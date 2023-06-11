@@ -120,8 +120,8 @@ export class Planet extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get planetType(): i32 {
-    let value = this.get("planetType");
+  get planetId(): i32 {
+    let value = this.get("planetId");
     if (!value || value.kind == ValueKind.NULL) {
       return 0;
     } else {
@@ -129,8 +129,21 @@ export class Planet extends Entity {
     }
   }
 
-  set planetType(value: i32) {
-    this.set("planetType", Value.fromI32(value));
+  set planetId(value: i32) {
+    this.set("planetId", Value.fromI32(value));
+  }
+
+  get planetType(): BigInt {
+    let value = this.get("planetType");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set planetType(value: BigInt) {
+    this.set("planetType", Value.fromBigInt(value));
   }
 
   get planetResourcesUnmined(): string {
