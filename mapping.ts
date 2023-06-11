@@ -1,4 +1,7 @@
-import { GENESIS } from "./generated/DiamondContract/DiamondContract";
+import {
+  GENESIS,
+  playerRegistered,
+} from "./generated/DiamondContract/DiamondContract";
 import {
   PlanetContract,
   Transfer,
@@ -8,8 +11,16 @@ import {
   Planet,
   PlanetResource,
   PlanetResourceAvailable,
+  Player,
 } from "./generated/schema";
 import { Address, BigInt } from "@graphprotocol/graph-ts";
+
+export function handleNewPlayer(event: playerRegistered): void {
+  let player = new Player(event.params.playerAddress.toHexString());
+  player.address = event.params.playerAddress.toHexString();
+  player.faction = event.params.faction;
+  player.save();
+}
 
 export function handleGenesis(event: GENESIS): void {
   updatePlanets(event.address);

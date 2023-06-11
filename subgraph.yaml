@@ -51,4 +51,6 @@ dataSources:
       eventHandlers: # <-- Add this section
         - event: GENESIS() # The event signature
           handler: handleGenesis # The event handler function in mapping.ts
+        - event: playerRegistered(indexed address,indexed uint256)
+          handler: handlePlayerRegistered
       file: ./mapping.ts

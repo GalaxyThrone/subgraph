@@ -51,4 +51,6 @@ dataSources:
       eventHandlers:
         - event: GENESIS()
           handler: handleGenesis
+        - event: playerRegistered(indexed address,indexed uint256)
+          handler: handlePlayerRegistered
       file: PlanetContract\PlanetContract.wasm

@@ -1,3 +1,9 @@
+type Player @entity {
+  id: ID!
+  address: String!
+  faction: BigInt!
+}
+
 type Planet @entity {
   id: ID!
   planetType: Int!
