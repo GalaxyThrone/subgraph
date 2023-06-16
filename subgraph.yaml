@@ -54,3 +54,23 @@ dataSources:
         - event: playerRegistered(indexed address,indexed uint256)
           handler: handlePlayerRegistered
       file: ./mapping.ts
+  - kind: ethereum/contract
+    name: ShipContract
+    network: mumbai
+    source:
+      address: "0xc5f528F37E3E37f05DE6fD7511BE3bEA10B26EB0" # Replace with actual ShipContract address
+      abi: ShipContract # Replace with actual ShipContract ABI
+      startBlock: 36683271
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Ship
+      abis:
+        - name: ShipContract
+          file: ./abis/ShipContract.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleShipTransfer # We will create this in mapping.ts
+      file: ./mapping.ts

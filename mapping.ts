@@ -16,6 +16,12 @@ import {
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { log } from "@graphprotocol/graph-ts";
 
+import {
+  ShipContract,
+  Transfer as ShipTransfer,
+} from "./generated/ShipContract/ShipContract";
+import { Ship } from "./generated/schema";
+
 export function handlePlayerRegistered(
   event: playerRegistered
 ): void {
@@ -123,4 +129,52 @@ function updatePlanets(contractAddress: Address): void {
 
     planet.save();
   }
+}
+
+export function handleShipTransfer(event: ShipTransfer): void {
+  let contractAddress = Address.fromString(
+    "0x90e01831D96f8aaE0f9f4ec0fFb399aC789A4c97"
+  );
+
+  let diamondContract = DiamondContract.bind(contractAddress);
+
+  let contract = ShipContract.bind(event.address);
+  let shipData = diamondContract.getShipTypeStats(
+    event.params.tokenId
+  );
+
+  let ship = new Ship(event.params.tokenId.toHexString());
+
+  ship.shipType = shipData.shipType;
+  ship.price = shipData.price as Array<BigInt>;
+  ship.attack = shipData.attack;
+  ship.attackTypes = shipData.attackTypes as Array<BigInt>;
+  ship.defenseTypes = shipData.defenseTypes as Array<BigInt>;
+  ship.health = shipData.health;
+  ship.cargo = shipData.cargo;
+  ship.craftTime = shipData.craftTime;
+  ship.craftedFrom = shipData.craftedFrom;
+  ship.name = shipData.name;
+  ship.moduleSlots = shipData.moduleSlots;
+
+  let player = Player.load(event.params.to.toHexString());
+  if (player === null) {
+    player = new Player(event.params.to.toHexString());
+    player.address = event.params.to.toHexString();
+    // Assuming faction to be zero if player is not already registered
+    player.faction = BigInt.fromI32(0);
+    player.save();
+  }
+
+  ship.owner = player.id;
+
+  // We need to identify which Planet the Ship is associated with and assign it to ship.planet
+  // @TODO new view function to check s.assignedPlanet[shipId];
+  let planetId = 0; //  contract.getAssignedPlanetShip(event.params.tokenId);
+  let planet = Planet.load(planetId.toString());
+  if (planet !== null) {
+    ship.planet = planet.id;
+  }
+
+  ship.save();
 }

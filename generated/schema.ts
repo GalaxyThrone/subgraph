@@ -79,6 +79,10 @@ export class Player extends Entity {
   get planets(): PlanetLoader {
     return new PlanetLoader("Player", this.get("id")!.toString(), "planets");
   }
+
+  get ships(): ShipLoader {
+    return new ShipLoader("Player", this.get("id")!.toString(), "ships");
+  }
 }
 
 export class Planet extends Entity {
@@ -226,6 +230,10 @@ export class Planet extends Entity {
 
   set buildings(value: Array<BigInt>) {
     this.set("buildings", Value.fromBigIntArray(value));
+  }
+
+  get ships(): ShipLoader {
+    return new ShipLoader("Planet", this.get("id")!.toString(), "ships");
   }
 }
 
@@ -396,6 +404,215 @@ export class PlanetResourceAvailable extends Entity {
   }
 }
 
+export class Ship extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Ship entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Ship must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Ship", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): Ship | null {
+    return changetype<Ship | null>(store.get_in_block("Ship", id));
+  }
+
+  static load(id: string): Ship | null {
+    return changetype<Ship | null>(store.get("Ship", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get shipType(): BigInt {
+    let value = this.get("shipType");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set shipType(value: BigInt) {
+    this.set("shipType", Value.fromBigInt(value));
+  }
+
+  get price(): Array<BigInt> {
+    let value = this.get("price");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigIntArray();
+    }
+  }
+
+  set price(value: Array<BigInt>) {
+    this.set("price", Value.fromBigIntArray(value));
+  }
+
+  get attack(): BigInt {
+    let value = this.get("attack");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set attack(value: BigInt) {
+    this.set("attack", Value.fromBigInt(value));
+  }
+
+  get attackTypes(): Array<BigInt> {
+    let value = this.get("attackTypes");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigIntArray();
+    }
+  }
+
+  set attackTypes(value: Array<BigInt>) {
+    this.set("attackTypes", Value.fromBigIntArray(value));
+  }
+
+  get defenseTypes(): Array<BigInt> {
+    let value = this.get("defenseTypes");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigIntArray();
+    }
+  }
+
+  set defenseTypes(value: Array<BigInt>) {
+    this.set("defenseTypes", Value.fromBigIntArray(value));
+  }
+
+  get health(): BigInt {
+    let value = this.get("health");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set health(value: BigInt) {
+    this.set("health", Value.fromBigInt(value));
+  }
+
+  get cargo(): BigInt {
+    let value = this.get("cargo");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set cargo(value: BigInt) {
+    this.set("cargo", Value.fromBigInt(value));
+  }
+
+  get craftTime(): BigInt {
+    let value = this.get("craftTime");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set craftTime(value: BigInt) {
+    this.set("craftTime", Value.fromBigInt(value));
+  }
+
+  get craftedFrom(): BigInt {
+    let value = this.get("craftedFrom");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set craftedFrom(value: BigInt) {
+    this.set("craftedFrom", Value.fromBigInt(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get moduleSlots(): BigInt {
+    let value = this.get("moduleSlots");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set moduleSlots(value: BigInt) {
+    this.set("moduleSlots", Value.fromBigInt(value));
+  }
+
+  get owner(): string {
+    let value = this.get("owner");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set owner(value: string) {
+    this.set("owner", Value.fromString(value));
+  }
+
+  get planet(): string {
+    let value = this.get("planet");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set planet(value: string) {
+    this.set("planet", Value.fromString(value));
+  }
+}
+
 export class PlanetLoader extends Entity {
   _entity: string;
   _field: string;
@@ -411,5 +628,23 @@ export class PlanetLoader extends Entity {
   load(): Planet[] {
     let value = store.loadRelated(this._entity, this._id, this._field);
     return changetype<Planet[]>(value);
+  }
+}
+
+export class ShipLoader extends Entity {
+  _entity: string;
+  _field: string;
+  _id: string;
+
+  constructor(entity: string, id: string, field: string) {
+    super();
+    this._entity = entity;
+    this._id = id;
+    this._field = field;
+  }
+
+  load(): Ship[] {
+    let value = store.loadRelated(this._entity, this._id, this._field);
+    return changetype<Ship[]>(value);
   }
 }

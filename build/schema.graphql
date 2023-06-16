@@ -3,6 +3,7 @@ type Player @entity {
   address: String!
   faction: BigInt!
   planets: [Planet!]! @derivedFrom(field: "owner")
+  ships: [Ship!]! @derivedFrom(field: "owner") # Added this line
 }
 
 type Planet @entity {
@@ -14,7 +15,8 @@ type Planet @entity {
   owner: Player
   pvpEnabled: Boolean
   miningLastClaimed: BigInt!
-  buildings: [BigInt!]! # <-- Add this line
+  buildings: [BigInt!]!
+  ships: [Ship!]! @derivedFrom(field: "planet") # Add this line
 }
 
 type PlanetResource @entity {
@@ -29,4 +31,21 @@ type PlanetResourceAvailable @entity {
   antimatter: BigInt!
   metal: BigInt!
   crystal: BigInt!
+}
+
+type Ship @entity {
+  id: ID! # This will correspond to the ERC721 tokenId
+  shipType: BigInt!
+  price: [BigInt!]! # Array to store price in [metal, crystal, antimatter, aether]
+  attack: BigInt!
+  attackTypes: [BigInt!]!
+  defenseTypes: [BigInt!]!
+  health: BigInt!
+  cargo: BigInt!
+  craftTime: BigInt!
+  craftedFrom: BigInt!
+  name: String!
+  moduleSlots: BigInt!
+  owner: Player! # Association to the Player that owns the ship
+  planet: Planet! # Association to the Planet that the ship is associated with, WIP till next redeploy
 }
