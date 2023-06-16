@@ -13,6 +13,7 @@ type Planet @entity {
   planetResourcesAvailable: PlanetResourceAvailable!
   owner: Player
   pvpEnabled: Boolean
+  miningLastClaimed: BigInt!
 }
 
 type PlanetResource @entity {

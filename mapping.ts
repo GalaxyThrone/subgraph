@@ -108,6 +108,9 @@ function updatePlanets(contractAddress: Address): void {
     planetResourcesAvailable.save();
 
     planet.planetResourcesAvailable = planetResourcesAvailable.id;
+    planet.miningLastClaimed = diamondContract.getLastClaimed(
+      BigInt.fromI32(i)
+    );
     planet.save();
   }
 }
