@@ -111,6 +111,16 @@ function updatePlanets(contractAddress: Address): void {
     planet.miningLastClaimed = diamondContract.getLastClaimed(
       BigInt.fromI32(i)
     );
+
+    let buildingsData = diamondContract.getAllBuildings(
+      BigInt.fromI32(i)
+    );
+    let buildings = new Array<BigInt>(buildingsData.length);
+    for (let j = 0; j < buildingsData.length; j++) {
+      buildings[j] = buildingsData[j];
+    }
+    planet.buildings = buildings;
+
     planet.save();
   }
 }

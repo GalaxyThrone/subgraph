@@ -214,6 +214,19 @@ export class Planet extends Entity {
   set miningLastClaimed(value: BigInt) {
     this.set("miningLastClaimed", Value.fromBigInt(value));
   }
+
+  get buildings(): Array<BigInt> {
+    let value = this.get("buildings");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigIntArray();
+    }
+  }
+
+  set buildings(value: Array<BigInt>) {
+    this.set("buildings", Value.fromBigIntArray(value));
+  }
 }
 
 export class PlanetResource extends Entity {

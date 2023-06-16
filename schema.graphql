@@ -14,6 +14,7 @@ type Planet @entity {
   owner: Player
   pvpEnabled: Boolean
   miningLastClaimed: BigInt!
+  buildings: [BigInt!]! # <-- Add this line
 }
 
 type PlanetResource @entity {
