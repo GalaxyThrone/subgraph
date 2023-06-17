@@ -22,6 +22,9 @@ import {
 } from "./generated/ShipContract/ShipContract";
 import { Ship } from "./generated/schema";
 
+const DIAMOND_CONTRACT_ADDRESS: string =
+  "0xBA9933aA20C3FE2f0240E4D9D673910f734e41a1";
+
 export function handlePlayerRegistered(
   event: playerRegistered
 ): void {
@@ -37,9 +40,7 @@ export function handleGenesis(event: GENESIS): void {
 }
 
 export function handleTransfer(event: Transfer): void {
-  let contractAddress = Address.fromString(
-    "0x90e01831D96f8aaE0f9f4ec0fFb399aC789A4c97"
-  );
+  let contractAddress = Address.fromString(DIAMOND_CONTRACT_ADDRESS);
 
   log.info("Actually updating transfer", []);
   updatePlanets(contractAddress);
@@ -132,9 +133,7 @@ function updatePlanets(contractAddress: Address): void {
 }
 
 export function handleShipTransfer(event: ShipTransfer): void {
-  let contractAddress = Address.fromString(
-    "0x90e01831D96f8aaE0f9f4ec0fFb399aC789A4c97"
-  );
+  let contractAddress = Address.fromString(DIAMOND_CONTRACT_ADDRESS);
 
   let diamondContract = DiamondContract.bind(contractAddress);
 
@@ -170,7 +169,9 @@ export function handleShipTransfer(event: ShipTransfer): void {
 
   // We need to identify which Planet the Ship is associated with and assign it to ship.planet
   // @TODO new view function to check s.assignedPlanet[shipId];
-  let planetId = 0; //  contract.getAssignedPlanetShip(event.params.tokenId);
+  let planetId = diamondContract.checkShipAssignedPlanet(
+    event.params.tokenId
+  );
   let planet = Planet.load(planetId.toString());
   if (planet !== null) {
     ship.planet = planet.id;

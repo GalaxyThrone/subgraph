@@ -8,7 +8,7 @@ dataSources:
     name: PlanetContract
     network: mumbai
     source:
-      address: "0x42ae07ee09001ABcE5372F75d0E12f9B31957149"
+      address: "0xed993a2Ac4A56dF34BDD59FBCb7F2382A17A4C60"
       abi: PlanetContract
       startBlock: 36683271
     mapping:
@@ -32,7 +32,7 @@ dataSources:
     name: DiamondContract
     network: mumbai
     source:
-      address: "0x90e01831D96f8aaE0f9f4ec0fFb399aC789A4c97"
+      address: "0xBA9933aA20C3FE2f0240E4D9D673910f734e41a1"
       abi: DiamondContract
       startBlock: 36683271
     mapping:
@@ -58,7 +58,7 @@ dataSources:
     name: ShipContract
     network: mumbai
     source:
-      address: "0xc5f528F37E3E37f05DE6fD7511BE3bEA10B26EB0" # Replace with actual ShipContract address
+      address: "0x639d638E7180498d7f5aBF6d7A0E6A888cAB82A6" # Replace with actual ShipContract address
       abi: ShipContract # Replace with actual ShipContract ABI
       startBlock: 36683271
     mapping:

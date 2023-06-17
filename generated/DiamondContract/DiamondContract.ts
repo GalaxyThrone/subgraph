@@ -154,6 +154,34 @@ export class leavingAlliance__Params {
   }
 }
 
+export class buildingsFinishedCrafting extends ethereum.Event {
+  get params(): buildingsFinishedCrafting__Params {
+    return new buildingsFinishedCrafting__Params(this);
+  }
+}
+
+export class buildingsFinishedCrafting__Params {
+  _event: buildingsFinishedCrafting;
+
+  constructor(event: buildingsFinishedCrafting) {
+    this._event = event;
+  }
+}
+
+export class buildingsStartedCrafting extends ethereum.Event {
+  get params(): buildingsStartedCrafting__Params {
+    return new buildingsStartedCrafting__Params(this);
+  }
+}
+
+export class buildingsStartedCrafting__Params {
+  _event: buildingsStartedCrafting;
+
+  constructor(event: buildingsStartedCrafting) {
+    this._event = event;
+  }
+}
+
 export class DiamondCut extends ethereum.Event {
   get params(): DiamondCut__Params {
     return new DiamondCut__Params(this);
@@ -241,6 +269,32 @@ export class attackLost__Params {
 
   get Attacker(): Address {
     return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class planetConquered extends ethereum.Event {
+  get params(): planetConquered__Params {
+    return new planetConquered__Params(this);
+  }
+}
+
+export class planetConquered__Params {
+  _event: planetConquered;
+
+  constructor(event: planetConquered) {
+    this._event = event;
+  }
+
+  get tokenId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get oldOwner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get newOwner(): Address {
+    return this._event.parameters[2].value.toAddress();
   }
 }
 
@@ -379,6 +433,20 @@ export class StartSendResources__Params {
 
   get arrivalTime(): BigInt {
     return this._event.parameters[4].value.toBigInt();
+  }
+}
+
+export class resolvedOutmining extends ethereum.Event {
+  get params(): resolvedOutmining__Params {
+    return new resolvedOutmining__Params(this);
+  }
+}
+
+export class resolvedOutmining__Params {
+  _event: resolvedOutmining;
+
+  constructor(event: resolvedOutmining) {
+    this._event = event;
   }
 }
 
@@ -2391,6 +2459,29 @@ export class DiamondContract extends ethereum.SmartContract {
     let result = super.tryCall(
       "checkAvailableModuleSlots",
       "checkAvailableModuleSlots(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_shipId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  checkShipAssignedPlanet(_shipId: BigInt): BigInt {
+    let result = super.call(
+      "checkShipAssignedPlanet",
+      "checkShipAssignedPlanet(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_shipId)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_checkShipAssignedPlanet(_shipId: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "checkShipAssignedPlanet",
+      "checkShipAssignedPlanet(uint256):(uint256)",
       [ethereum.Value.fromUnsignedBigInt(_shipId)]
     );
     if (result.reverted) {
