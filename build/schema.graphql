@@ -49,3 +49,36 @@ type Ship @entity {
   owner: Player! # Association to the Player that owns the ship
   planet: Planet! # Association to the Planet that the ship is associated with, WIP till next redeploy
 }
+
+type Attack @entity {
+  id: ID! #instance id
+  attackerShips: [BigInt!]
+  fromPlanet: BigInt!
+  toPlanet: BigInt!
+  attackerAddress: String!
+  startTime: BigInt!
+  arrivalTime: BigInt!
+  resolved: Boolean
+}
+
+type Terraforming @entity {
+  id: ID! #instance id
+  attackerShips: [BigInt!]
+  fromPlanet: BigInt!
+  toPlanet: BigInt!
+  senderAddress: String!
+  startTime: BigInt!
+  arrivalTime: BigInt!
+  resolved: Boolean
+}
+
+type Outmining @entity {
+  id: ID! #instance id
+  attackerShips: [BigInt!]
+  fromPlanet: BigInt!
+  toPlanet: BigInt!
+  senderAddress: String!
+  startTime: BigInt!
+  arrivalTime: BigInt!
+  resolved: Boolean
+}

@@ -263,12 +263,16 @@ export class attackLost__Params {
     this._event = event;
   }
 
-  get attackedPlanet(): BigInt {
+  get id(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
+  get attackedPlanet(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
   get Attacker(): Address {
-    return this._event.parameters[1].value.toAddress();
+    return this._event.parameters[2].value.toAddress();
   }
 }
 
@@ -285,16 +289,20 @@ export class planetConquered__Params {
     this._event = event;
   }
 
-  get tokenId(): BigInt {
+  get id(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
+  get tokenId(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
   get oldOwner(): Address {
-    return this._event.parameters[1].value.toAddress();
+    return this._event.parameters[2].value.toAddress();
   }
 
   get newOwner(): Address {
-    return this._event.parameters[2].value.toAddress();
+    return this._event.parameters[3].value.toAddress();
   }
 }
 
@@ -355,16 +363,20 @@ export class SendTerraformer__Params {
     this._event = event;
   }
 
-  get toPlanet(): BigInt {
+  get id(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get arrivalTime(): BigInt {
+  get toPlanet(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
 
-  get instanceId(): BigInt {
+  get arrivalTime(): BigInt {
     return this._event.parameters[2].value.toBigInt();
+  }
+
+  get instanceId(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
   }
 }
 
@@ -381,24 +393,28 @@ export class StartOutMining__Params {
     this._event = event;
   }
 
-  get fromPlanetId(): BigInt {
+  get id(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get toPlanetId(): BigInt {
+  get fromPlanetId(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
 
+  get toPlanetId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
   get sender(): Address {
-    return this._event.parameters[2].value.toAddress();
+    return this._event.parameters[3].value.toAddress();
   }
 
   get shipsIds(): Array<BigInt> {
-    return this._event.parameters[3].value.toBigIntArray();
+    return this._event.parameters[4].value.toBigIntArray();
   }
 
   get arrivalTime(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
+    return this._event.parameters[5].value.toBigInt();
   }
 }
 
@@ -447,6 +463,28 @@ export class resolvedOutmining__Params {
 
   constructor(event: resolvedOutmining) {
     this._event = event;
+  }
+
+  get id(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
+export class resolvedTerraforming extends ethereum.Event {
+  get params(): resolvedTerraforming__Params {
+    return new resolvedTerraforming__Params(this);
+  }
+}
+
+export class resolvedTerraforming__Params {
+  _event: resolvedTerraforming;
+
+  constructor(event: resolvedTerraforming) {
+    this._event = event;
+  }
+
+  get id(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
   }
 }
 
@@ -1270,6 +1308,32 @@ export class DiamondContract__returnEquippedModuleSlotsResultValue0Struct extend
 }
 
 export class DiamondContract__showIncomingTerraformersPlanetResultValue0Struct extends ethereum.Tuple {
+  get instanceId(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get fromPlanetId(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get toPlanetId(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get shipsIds(): Array<BigInt> {
+    return this[3].toBigIntArray();
+  }
+
+  get timestamp(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get arrivalTime(): BigInt {
+    return this[5].toBigInt();
+  }
+}
+
+export class DiamondContract__showOutminingInstanceResultValue0Struct extends ethereum.Tuple {
   get instanceId(): BigInt {
     return this[0].toBigInt();
   }
@@ -2967,6 +3031,41 @@ export class DiamondContract extends ethereum.SmartContract {
       value[0].toTupleArray<
         DiamondContract__showIncomingTerraformersPlanetResultValue0Struct
       >()
+    );
+  }
+
+  showOutminingInstance(
+    _idToCheck: BigInt
+  ): DiamondContract__showOutminingInstanceResultValue0Struct {
+    let result = super.call(
+      "showOutminingInstance",
+      "showOutminingInstance(uint256):((uint256,uint256,uint256,uint256[],uint256,uint256))",
+      [ethereum.Value.fromUnsignedBigInt(_idToCheck)]
+    );
+
+    return changetype<DiamondContract__showOutminingInstanceResultValue0Struct>(
+      result[0].toTuple()
+    );
+  }
+
+  try_showOutminingInstance(
+    _idToCheck: BigInt
+  ): ethereum.CallResult<
+    DiamondContract__showOutminingInstanceResultValue0Struct
+  > {
+    let result = super.tryCall(
+      "showOutminingInstance",
+      "showOutminingInstance(uint256):((uint256,uint256,uint256,uint256[],uint256,uint256))",
+      [ethereum.Value.fromUnsignedBigInt(_idToCheck)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      changetype<DiamondContract__showOutminingInstanceResultValue0Struct>(
+        value[0].toTuple()
+      )
     );
   }
 

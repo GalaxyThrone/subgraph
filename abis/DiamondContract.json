@@ -1453,6 +1453,12 @@
         "anonymous": false,
         "inputs": [
             {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            },
+            {
                 "indexed": true,
                 "internalType": "uint256",
                 "name": "attackedPlanet",
@@ -1471,6 +1477,12 @@
     {
         "anonymous": false,
         "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            },
             {
                 "indexed": true,
                 "internalType": "uint256",
@@ -2043,6 +2055,12 @@
         "anonymous": false,
         "inputs": [
             {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            },
+            {
                 "indexed": true,
                 "internalType": "uint256",
                 "name": "toPlanet",
@@ -2067,6 +2085,12 @@
     {
         "anonymous": false,
         "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            },
             {
                 "indexed": true,
                 "internalType": "uint256",
@@ -2140,8 +2164,28 @@
     },
     {
         "anonymous": false,
-        "inputs": [],
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            }
+        ],
         "name": "resolvedOutmining",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            }
+        ],
+        "name": "resolvedTerraforming",
         "type": "event"
     },
     {
@@ -3070,6 +3114,57 @@
                 "internalType": "struct SendTerraform[]",
                 "name": "",
                 "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_idToCheck",
+                "type": "uint256"
+            }
+        ],
+        "name": "showOutminingInstance",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "instanceId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "fromPlanetId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "toPlanetId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256[]",
+                        "name": "shipsIds",
+                        "type": "uint256[]"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "arrivalTime",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct OutMining",
+                "name": "",
+                "type": "tuple"
             }
         ],
         "stateMutability": "view",

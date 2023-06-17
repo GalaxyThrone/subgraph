@@ -8,7 +8,7 @@ dataSources:
     name: PlanetContract
     network: mumbai
     source:
-      address: "0xed993a2Ac4A56dF34BDD59FBCb7F2382A17A4C60"
+      address: "0x6916166D458B3Fc3fD45dd3855E3e5dbC4A2AD11"
       abi: PlanetContract
       startBlock: 36683271
     mapping:
@@ -26,13 +26,13 @@ dataSources:
           file: ./abis/DiamondContract.json
       file: ./mapping.ts
       eventHandlers:
-        - event: Transfer(indexed address,indexed address,indexed uint256) # This is just an example, replace with an actual event from PlanetContract
-          handler: handleTransfer # You will also need to create this handler in your mapping.ts file
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
   - kind: ethereum/contract
     name: DiamondContract
     network: mumbai
     source:
-      address: "0xBA9933aA20C3FE2f0240E4D9D673910f734e41a1"
+      address: "0x1FE2115bD88eb691aA3e2649DA85E9A568046724"
       abi: DiamondContract
       startBlock: 36683271
     mapping:
@@ -40,26 +40,43 @@ dataSources:
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
+        - Player
         - Planet
-        - PlanetResource
-        - PlanetResourceAvailable
+        - Ship
+        - Attack
+        - Outmining
+        - Terraforming
       abis:
         - name: DiamondContract
           file: ./abis/DiamondContract.json
-        - name: PlanetContract # Added this line
-          file: ./abis/PlanetContract.json # And this line
-      eventHandlers: # <-- Add this section
-        - event: GENESIS() # The event signature
-          handler: handleGenesis # The event handler function in mapping.ts
+        - name: PlanetContract
+          file: ./abis/PlanetContract.json
+      file: ./mapping.ts
+      eventHandlers:
+        - event: GENESIS()
+          handler: handleGenesis
         - event: playerRegistered(indexed address,indexed uint256)
           handler: handlePlayerRegistered
-      file: ./mapping.ts
+        - event: AttackSent(indexed uint256,indexed uint256,indexed address)
+          handler: handleAttackSent
+        - event: planetConquered(uint256,indexed uint256,indexed address,indexed address)
+          handler: handlePlanetConquered
+        - event: attackLost(uint256,indexed uint256,indexed address)
+          handler: handleAttackLost
+        - event: SendTerraformer(uint256,indexed uint256,indexed uint256,indexed uint256)
+          handler: handleSendTerraformer
+        - event: StartOutMining(uint256,indexed uint256,indexed uint256,indexed address,uint256[],uint256)
+          handler: handleStartOutMining
+        - event: resolvedOutmining(uint256)
+          handler: handleResolvedOutmining
+        - event: resolvedTerraforming(uint256)
+          handler: handleResolvedTerraforming
   - kind: ethereum/contract
     name: ShipContract
     network: mumbai
     source:
-      address: "0x639d638E7180498d7f5aBF6d7A0E6A888cAB82A6" # Replace with actual ShipContract address
-      abi: ShipContract # Replace with actual ShipContract ABI
+      address: "0x4d288d59B9B941c164fbCAdA1A0e137e3C0f7544"
+      abi: ShipContract
       startBlock: 36683271
     mapping:
       kind: ethereum/events
@@ -70,7 +87,7 @@ dataSources:
       abis:
         - name: ShipContract
           file: ./abis/ShipContract.json
+      file: ./mapping.ts
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleShipTransfer # We will create this in mapping.ts
-      file: ./mapping.ts
+          handler: handleShipTransfer

@@ -1,6 +1,13 @@
 import {
+  AttackSent,
   GENESIS,
+  attackLost,
+  planetConquered,
   playerRegistered,
+  SendTerraformer,
+  StartOutMining,
+  resolvedTerraforming,
+  resolvedOutmining,
 } from "./generated/DiamondContract/DiamondContract";
 import {
   PlanetContract,
@@ -8,10 +15,13 @@ import {
 } from "./generated/PlanetContract/PlanetContract"; // <-- Add this
 import { DiamondContract } from "./generated/DiamondContract/DiamondContract"; // <-- Add this
 import {
+  Attack,
+  Outmining,
   Planet,
   PlanetResource,
   PlanetResourceAvailable,
   Player,
+  Terraforming,
 } from "./generated/schema";
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { log } from "@graphprotocol/graph-ts";
@@ -23,7 +33,7 @@ import {
 import { Ship } from "./generated/schema";
 
 const DIAMOND_CONTRACT_ADDRESS: string =
-  "0xBA9933aA20C3FE2f0240E4D9D673910f734e41a1";
+  "0x1FE2115bD88eb691aA3e2649DA85E9A568046724";
 
 export function handlePlayerRegistered(
   event: playerRegistered
@@ -129,6 +139,106 @@ function updatePlanets(contractAddress: Address): void {
     planet.buildings = buildings;
 
     planet.save();
+  }
+}
+
+export function handleAttackSent(event: AttackSent): void {
+  let contract = DiamondContract.bind(event.address);
+  let attackStatus = contract.getAttackStatus(event.params.id);
+
+  let attack = new Attack(event.params.id.toString());
+  attack.attackerShips = attackStatus.attackerShipsIds as BigInt[];
+  attack.fromPlanet = attackStatus.fromPlanet;
+  attack.toPlanet = attackStatus.toPlanet;
+  attack.attackerAddress = attackStatus.attacker.toHexString();
+  attack.startTime = event.block.timestamp;
+  attack.arrivalTime = attackStatus.timeToBeResolved;
+  attack.resolved = false;
+
+  attack.save();
+}
+
+export function handleSendTerraformer(event: SendTerraformer): void {
+  let contract = DiamondContract.bind(event.address);
+
+  let terraformInstance = contract.showTerraformingInstance(
+    event.params.instanceId
+  );
+
+  let terraforming = new Terraforming(
+    event.params.instanceId.toString()
+  );
+  terraforming.attackerShips = terraformInstance.shipsIds as BigInt[];
+  terraforming.fromPlanet = terraformInstance.fromPlanetId;
+  terraforming.toPlanet = event.params.toPlanet;
+  terraforming.startTime = terraformInstance.timestamp;
+  terraforming.arrivalTime = event.params.arrivalTime;
+  terraforming.resolved = false;
+
+  let firstShip = Ship.load(terraformInstance.shipsIds[0].toHex());
+  if (firstShip != null) {
+    terraforming.senderAddress = firstShip.owner;
+  }
+
+  terraforming.save();
+}
+
+export function handleStartOutMining(event: StartOutMining): void {
+  let contract = DiamondContract.bind(event.address);
+
+  let outminingInstance = contract.showOutminingInstance(
+    event.params.id
+  );
+
+  let outmining = new Outmining(event.params.id.toString());
+  outmining.attackerShips = outminingInstance.shipsIds as BigInt[];
+  outmining.fromPlanet = outminingInstance.fromPlanetId;
+  outmining.toPlanet = outminingInstance.toPlanetId;
+  outmining.senderAddress = event.params.sender.toHexString();
+  outmining.startTime = outminingInstance.timestamp;
+  outmining.arrivalTime = outminingInstance.arrivalTime;
+  outmining.resolved = false;
+
+  outmining.save();
+}
+
+export function handlePlanetConquered(event: planetConquered): void {
+  let attack = Attack.load(event.params.id.toString());
+  if (attack != null) {
+    attack.resolved = true;
+    attack.save();
+  }
+}
+
+export function handleAttackLost(event: attackLost): void {
+  let attack = Attack.load(event.params.id.toString());
+  if (attack != null) {
+    attack.resolved = true;
+    attack.save();
+  }
+}
+
+export function handleResolvedOutmining(
+  event: resolvedOutmining
+): void {
+  let outminingId = event.params.id.toString();
+  let outmining = Outmining.load(outminingId);
+
+  if (outmining != null) {
+    outmining.resolved = true;
+    outmining.save();
+  }
+}
+
+export function handleResolvedTerraforming(
+  event: resolvedTerraforming
+): void {
+  let terraformingId = event.params.id.toString();
+  let terraforming = Terraforming.load(terraformingId);
+
+  if (terraforming != null) {
+    terraforming.resolved = true;
+    terraforming.save();
   }
 }
 

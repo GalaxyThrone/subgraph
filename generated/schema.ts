@@ -613,6 +613,413 @@ export class Ship extends Entity {
   }
 }
 
+export class Attack extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Attack entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Attack must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Attack", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): Attack | null {
+    return changetype<Attack | null>(store.get_in_block("Attack", id));
+  }
+
+  static load(id: string): Attack | null {
+    return changetype<Attack | null>(store.get("Attack", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get attackerShips(): Array<BigInt> | null {
+    let value = this.get("attackerShips");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigIntArray();
+    }
+  }
+
+  set attackerShips(value: Array<BigInt> | null) {
+    if (!value) {
+      this.unset("attackerShips");
+    } else {
+      this.set("attackerShips", Value.fromBigIntArray(<Array<BigInt>>value));
+    }
+  }
+
+  get fromPlanet(): BigInt {
+    let value = this.get("fromPlanet");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set fromPlanet(value: BigInt) {
+    this.set("fromPlanet", Value.fromBigInt(value));
+  }
+
+  get toPlanet(): BigInt {
+    let value = this.get("toPlanet");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set toPlanet(value: BigInt) {
+    this.set("toPlanet", Value.fromBigInt(value));
+  }
+
+  get attackerAddress(): string {
+    let value = this.get("attackerAddress");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set attackerAddress(value: string) {
+    this.set("attackerAddress", Value.fromString(value));
+  }
+
+  get startTime(): BigInt {
+    let value = this.get("startTime");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set startTime(value: BigInt) {
+    this.set("startTime", Value.fromBigInt(value));
+  }
+
+  get arrivalTime(): BigInt {
+    let value = this.get("arrivalTime");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set arrivalTime(value: BigInt) {
+    this.set("arrivalTime", Value.fromBigInt(value));
+  }
+
+  get resolved(): boolean {
+    let value = this.get("resolved");
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
+  }
+
+  set resolved(value: boolean) {
+    this.set("resolved", Value.fromBoolean(value));
+  }
+}
+
+export class Terraforming extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Terraforming entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Terraforming must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Terraforming", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): Terraforming | null {
+    return changetype<Terraforming | null>(
+      store.get_in_block("Terraforming", id)
+    );
+  }
+
+  static load(id: string): Terraforming | null {
+    return changetype<Terraforming | null>(store.get("Terraforming", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get attackerShips(): Array<BigInt> | null {
+    let value = this.get("attackerShips");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigIntArray();
+    }
+  }
+
+  set attackerShips(value: Array<BigInt> | null) {
+    if (!value) {
+      this.unset("attackerShips");
+    } else {
+      this.set("attackerShips", Value.fromBigIntArray(<Array<BigInt>>value));
+    }
+  }
+
+  get fromPlanet(): BigInt {
+    let value = this.get("fromPlanet");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set fromPlanet(value: BigInt) {
+    this.set("fromPlanet", Value.fromBigInt(value));
+  }
+
+  get toPlanet(): BigInt {
+    let value = this.get("toPlanet");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set toPlanet(value: BigInt) {
+    this.set("toPlanet", Value.fromBigInt(value));
+  }
+
+  get senderAddress(): string {
+    let value = this.get("senderAddress");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set senderAddress(value: string) {
+    this.set("senderAddress", Value.fromString(value));
+  }
+
+  get startTime(): BigInt {
+    let value = this.get("startTime");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set startTime(value: BigInt) {
+    this.set("startTime", Value.fromBigInt(value));
+  }
+
+  get arrivalTime(): BigInt {
+    let value = this.get("arrivalTime");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set arrivalTime(value: BigInt) {
+    this.set("arrivalTime", Value.fromBigInt(value));
+  }
+
+  get resolved(): boolean {
+    let value = this.get("resolved");
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
+  }
+
+  set resolved(value: boolean) {
+    this.set("resolved", Value.fromBoolean(value));
+  }
+}
+
+export class Outmining extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Outmining entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Outmining must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Outmining", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): Outmining | null {
+    return changetype<Outmining | null>(store.get_in_block("Outmining", id));
+  }
+
+  static load(id: string): Outmining | null {
+    return changetype<Outmining | null>(store.get("Outmining", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get attackerShips(): Array<BigInt> | null {
+    let value = this.get("attackerShips");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigIntArray();
+    }
+  }
+
+  set attackerShips(value: Array<BigInt> | null) {
+    if (!value) {
+      this.unset("attackerShips");
+    } else {
+      this.set("attackerShips", Value.fromBigIntArray(<Array<BigInt>>value));
+    }
+  }
+
+  get fromPlanet(): BigInt {
+    let value = this.get("fromPlanet");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set fromPlanet(value: BigInt) {
+    this.set("fromPlanet", Value.fromBigInt(value));
+  }
+
+  get toPlanet(): BigInt {
+    let value = this.get("toPlanet");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set toPlanet(value: BigInt) {
+    this.set("toPlanet", Value.fromBigInt(value));
+  }
+
+  get senderAddress(): string {
+    let value = this.get("senderAddress");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set senderAddress(value: string) {
+    this.set("senderAddress", Value.fromString(value));
+  }
+
+  get startTime(): BigInt {
+    let value = this.get("startTime");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set startTime(value: BigInt) {
+    this.set("startTime", Value.fromBigInt(value));
+  }
+
+  get arrivalTime(): BigInt {
+    let value = this.get("arrivalTime");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set arrivalTime(value: BigInt) {
+    this.set("arrivalTime", Value.fromBigInt(value));
+  }
+
+  get resolved(): boolean {
+    let value = this.get("resolved");
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
+  }
+
+  set resolved(value: boolean) {
+    this.set("resolved", Value.fromBoolean(value));
+  }
+}
+
 export class PlanetLoader extends Entity {
   _entity: string;
   _field: string;
