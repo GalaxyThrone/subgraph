@@ -764,13 +764,27 @@
     },
     {
         "anonymous": false,
-        "inputs": [],
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "planetId",
+                "type": "uint256"
+            }
+        ],
         "name": "buildingsFinishedCrafting",
         "type": "event"
     },
     {
         "anonymous": false,
-        "inputs": [],
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "planetId",
+                "type": "uint256"
+            }
+        ],
         "name": "buildingsStartedCrafting",
         "type": "event"
     },
@@ -2186,6 +2200,32 @@
             }
         ],
         "name": "resolvedTerraforming",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "planetId",
+                "type": "uint256"
+            }
+        ],
+        "name": "shipsFinishedCrafting",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "planetId",
+                "type": "uint256"
+            }
+        ],
+        "name": "shipsStartedCrafting",
         "type": "event"
     },
     {

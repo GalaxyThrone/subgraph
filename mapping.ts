@@ -8,6 +8,10 @@ import {
   StartOutMining,
   resolvedTerraforming,
   resolvedOutmining,
+  buildingsFinishedCrafting,
+  buildingsStartedCrafting,
+  shipsFinishedCrafting,
+  shipsStartedCrafting,
 } from "./generated/DiamondContract/DiamondContract";
 import {
   PlanetContract,
@@ -16,6 +20,8 @@ import {
 import { DiamondContract } from "./generated/DiamondContract/DiamondContract"; // <-- Add this
 import {
   Attack,
+  CraftBuilding,
+  CraftShip,
   Outmining,
   Planet,
   PlanetResource,
@@ -33,7 +39,7 @@ import {
 import { Ship } from "./generated/schema";
 
 const DIAMOND_CONTRACT_ADDRESS: string =
-  "0x1FE2115bD88eb691aA3e2649DA85E9A568046724";
+  "0xFf3D0Eb942a847966fc63942E6dc954c98D321De";
 
 export function handlePlayerRegistered(
   event: playerRegistered
@@ -288,4 +294,94 @@ export function handleShipTransfer(event: ShipTransfer): void {
   }
 
   ship.save();
+}
+
+export function handleBuildingsStartedCrafting(
+  event: buildingsStartedCrafting
+): void {
+  let contract = DiamondContract.bind(event.address);
+  let craftItem = contract.getCraftBuildings(event.params.planetId);
+
+  let craftBuilding = new CraftBuilding(
+    event.params.planetId.toString()
+  );
+  craftBuilding.amount = craftItem.amount;
+  craftBuilding.planetId = event.params.planetId.toI32();
+  craftBuilding.itemId = craftItem.itemId;
+  craftBuilding.readyTimestamp = craftItem.readyTimestamp;
+  craftBuilding.startTimestamp = craftItem.startTimestamp;
+  craftBuilding.unclaimedAmount = craftItem.unclaimedAmount;
+  craftBuilding.craftTimeItem = craftItem.craftTimeItem;
+  craftBuilding.isActive = true;
+
+  craftBuilding.save();
+
+  let planet = Planet.load(event.params.planetId.toString());
+  if (planet != null) {
+    planet.craftingBuilding = craftBuilding.id;
+    planet.save();
+  }
+}
+
+export function handleBuildingsFinishedCrafting(
+  event: buildingsFinishedCrafting
+): void {
+  let planet = Planet.load(event.params.planetId.toI32().toString());
+  if (planet != null) {
+    let craftBuildingId = planet.craftingBuilding;
+    if (craftBuildingId != null) {
+      let craftBuilding = CraftBuilding.load(
+        craftBuildingId as string
+      );
+      if (craftBuilding != null) {
+        craftBuilding.isActive = false;
+        craftBuilding.save();
+      }
+    }
+    planet.craftingBuilding = null;
+    planet.save();
+  }
+}
+
+export function handleShipsStartedCrafting(
+  event: shipsStartedCrafting
+): void {
+  let contract = DiamondContract.bind(event.address);
+  let craftItem = contract.getCraftFleets(event.params.planetId);
+
+  let craftShip = new CraftShip(event.params.planetId.toString());
+  craftShip.amount = craftItem.amount;
+  craftShip.planetId = event.params.planetId.toI32();
+  craftShip.itemId = craftItem.itemId;
+  craftShip.readyTimestamp = craftItem.readyTimestamp;
+  craftShip.startTimestamp = craftItem.startTimestamp;
+  craftShip.unclaimedAmount = craftItem.unclaimedAmount;
+  craftShip.craftTimeItem = craftItem.craftTimeItem;
+  craftShip.isActive = true;
+
+  craftShip.save();
+
+  let planet = Planet.load(event.params.planetId.toString());
+  if (planet != null) {
+    planet.craftingShip = craftShip.id;
+    planet.save();
+  }
+}
+
+export function handleShipsFinishedCrafting(
+  event: shipsFinishedCrafting
+): void {
+  let planet = Planet.load(event.params.planetId.toI32().toString());
+  if (planet != null) {
+    let craftShipId = planet.craftingShip;
+    if (craftShipId != null) {
+      let craftShip = CraftShip.load(craftShipId as string);
+      if (craftShip != null) {
+        craftShip.isActive = false;
+        craftShip.save();
+      }
+    }
+    planet.craftingShip = null;
+    planet.save();
+  }
 }

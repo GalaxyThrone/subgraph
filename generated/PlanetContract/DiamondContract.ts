@@ -166,6 +166,10 @@ export class buildingsFinishedCrafting__Params {
   constructor(event: buildingsFinishedCrafting) {
     this._event = event;
   }
+
+  get planetId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
 }
 
 export class buildingsStartedCrafting extends ethereum.Event {
@@ -179,6 +183,10 @@ export class buildingsStartedCrafting__Params {
 
   constructor(event: buildingsStartedCrafting) {
     this._event = event;
+  }
+
+  get planetId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
   }
 }
 
@@ -484,6 +492,42 @@ export class resolvedTerraforming__Params {
   }
 
   get id(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
+export class shipsFinishedCrafting extends ethereum.Event {
+  get params(): shipsFinishedCrafting__Params {
+    return new shipsFinishedCrafting__Params(this);
+  }
+}
+
+export class shipsFinishedCrafting__Params {
+  _event: shipsFinishedCrafting;
+
+  constructor(event: shipsFinishedCrafting) {
+    this._event = event;
+  }
+
+  get planetId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
+export class shipsStartedCrafting extends ethereum.Event {
+  get params(): shipsStartedCrafting__Params {
+    return new shipsStartedCrafting__Params(this);
+  }
+}
+
+export class shipsStartedCrafting__Params {
+  _event: shipsStartedCrafting;
+
+  constructor(event: shipsStartedCrafting) {
+    this._event = event;
+  }
+
+  get planetId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
 }

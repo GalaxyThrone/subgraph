@@ -17,6 +17,8 @@ type Planet @entity {
   miningLastClaimed: BigInt!
   buildings: [BigInt!]!
   ships: [Ship!]! @derivedFrom(field: "planet") # Add this line
+  craftingBuilding: CraftBuilding
+  craftingShip: CraftShip
 }
 
 type PlanetResource @entity {
@@ -81,4 +83,28 @@ type Outmining @entity {
   startTime: BigInt!
   arrivalTime: BigInt!
   resolved: Boolean
+}
+
+type CraftBuilding @entity {
+  id: ID!
+  amount: BigInt!
+  planetId: Int!
+  itemId: BigInt!
+  readyTimestamp: BigInt!
+  startTimestamp: BigInt!
+  unclaimedAmount: BigInt!
+  craftTimeItem: BigInt!
+  isActive: Boolean! # Add this field
+}
+
+type CraftShip @entity {
+  id: ID!
+  amount: BigInt!
+  planetId: Int!
+  itemId: BigInt!
+  readyTimestamp: BigInt!
+  startTimestamp: BigInt!
+  unclaimedAmount: BigInt!
+  craftTimeItem: BigInt!
+  isActive: Boolean!
 }
