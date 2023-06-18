@@ -4,6 +4,22 @@ type Player @entity {
   faction: BigInt!
   planets: [Planet!]! @derivedFrom(field: "owner")
   ships: [Ship!]! @derivedFrom(field: "owner") # Added this line
+  alliance: String
+  invitations: [Invitation!]! @derivedFrom(field: "invitee")
+}
+
+type Alliance @entity {
+  id: ID!
+  name: String!
+  leaderAddress: String!
+  memberCount: Int!
+}
+
+type Invitation @entity {
+  id: ID!
+  invitee: Player!
+  alliance: Alliance!
+  timestamp: BigInt!
 }
 
 type Planet @entity {

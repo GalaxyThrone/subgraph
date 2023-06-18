@@ -12,6 +12,11 @@ import {
   buildingsStartedCrafting,
   shipsFinishedCrafting,
   shipsStartedCrafting,
+  allianceCreated,
+  joinedAlliance,
+  changedAllianceOwner,
+  leavingAlliance,
+  invitedToAlliance,
 } from "./generated/DiamondContract/DiamondContract";
 import {
   PlanetContract,
@@ -19,9 +24,11 @@ import {
 } from "./generated/PlanetContract/PlanetContract"; // <-- Add this
 import { DiamondContract } from "./generated/DiamondContract/DiamondContract"; // <-- Add this
 import {
+  Alliance,
   Attack,
   CraftBuilding,
   CraftShip,
+  Invitation,
   Outmining,
   Planet,
   PlanetResource,
@@ -384,4 +391,93 @@ export function handleShipsFinishedCrafting(
     planet.craftingShip = null;
     planet.save();
   }
+}
+export function handleAllianceCreated(event: allianceCreated): void {
+  let alliance = new Alliance(event.params.allianceName.toString());
+  alliance.name = event.params.allianceName.toString();
+  alliance.leaderAddress = event.params.allianceCreator.toHexString();
+  alliance.memberCount = 1; // Initially the creator is the only member
+
+  alliance.save();
+
+  let player = Player.load(alliance.leaderAddress);
+  if (player != null) {
+    player.alliance = alliance.id;
+    player.save();
+  } else {
+    log.error("Player {} not found", [alliance.leaderAddress]);
+  }
+}
+
+export function handleJoinedAlliance(event: joinedAlliance): void {
+  let player = Player.load(event.params.playerAddress.toHexString());
+  let alliance = Alliance.load(event.params.allianceName.toString());
+
+  if (player != null && alliance != null) {
+    player.alliance = alliance.id;
+    player.save();
+
+    alliance.memberCount += 1;
+    alliance.save();
+  } else {
+    log.error("Player or Alliance not found", []);
+  }
+}
+
+export function handleLeavingAlliance(event: leavingAlliance): void {
+  let player = Player.load(event.params.playerAddress.toHexString());
+  let alliance = Alliance.load(event.params.allianceName.toString());
+
+  if (player != null && alliance != null) {
+    player.alliance = null;
+    player.save();
+
+    alliance.memberCount -= 1;
+    alliance.save();
+  } else {
+    log.error("Player or Alliance not found", []);
+  }
+}
+
+export function handleChangedAllianceOwner(
+  event: changedAllianceOwner
+): void {
+  let alliance = Alliance.load(event.params.allianceName.toString());
+
+  if (alliance != null) {
+    alliance.leaderAddress = event.params.newOwner.toHexString();
+    alliance.save();
+  } else {
+    log.error("Alliance not found", []);
+  }
+}
+
+export function handleInvitedToAlliance(
+  event: invitedToAlliance
+): void {
+  // Convert allianceName from bytes32 to string
+  let allianceName = event.params.allianceName.toString();
+
+  // Find alliance by name (assuming it's unique)
+  let alliance = Alliance.load(allianceName);
+  if (alliance == null) {
+    log.error("Alliance not found", [allianceName]);
+    return;
+  }
+
+  // Load player by address
+  let playerAddress = event.params.playerAddress.toHexString();
+  let player = Player.load(playerAddress);
+  if (player == null) {
+    log.error("Player not found", [playerAddress]);
+    return;
+  }
+
+  // Create new Invitation
+  let invitationId = event.transaction.hash.toHex();
+  let invitation = new Invitation(invitationId);
+  invitation.invitee = player.id;
+  invitation.alliance = alliance.id;
+  invitation.timestamp = event.params.timestamp;
+  invitation.save();
 }

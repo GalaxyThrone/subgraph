@@ -83,6 +83,189 @@ export class Player extends Entity {
   get ships(): ShipLoader {
     return new ShipLoader("Player", this.get("id")!.toString(), "ships");
   }
+
+  get alliance(): string | null {
+    let value = this.get("alliance");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set alliance(value: string | null) {
+    if (!value) {
+      this.unset("alliance");
+    } else {
+      this.set("alliance", Value.fromString(<string>value));
+    }
+  }
+
+  get invitations(): InvitationLoader {
+    return new InvitationLoader(
+      "Player",
+      this.get("id")!.toString(),
+      "invitations"
+    );
+  }
+}
+
+export class Alliance extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Alliance entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Alliance must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Alliance", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): Alliance | null {
+    return changetype<Alliance | null>(store.get_in_block("Alliance", id));
+  }
+
+  static load(id: string): Alliance | null {
+    return changetype<Alliance | null>(store.get("Alliance", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get leaderAddress(): string {
+    let value = this.get("leaderAddress");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set leaderAddress(value: string) {
+    this.set("leaderAddress", Value.fromString(value));
+  }
+
+  get memberCount(): i32 {
+    let value = this.get("memberCount");
+    if (!value || value.kind == ValueKind.NULL) {
+      return 0;
+    } else {
+      return value.toI32();
+    }
+  }
+
+  set memberCount(value: i32) {
+    this.set("memberCount", Value.fromI32(value));
+  }
+}
+
+export class Invitation extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Invitation entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Invitation must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Invitation", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): Invitation | null {
+    return changetype<Invitation | null>(store.get_in_block("Invitation", id));
+  }
+
+  static load(id: string): Invitation | null {
+    return changetype<Invitation | null>(store.get("Invitation", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get invitee(): string {
+    let value = this.get("invitee");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set invitee(value: string) {
+    this.set("invitee", Value.fromString(value));
+  }
+
+  get alliance(): string {
+    let value = this.get("alliance");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set alliance(value: string) {
+    this.set("alliance", Value.fromString(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
 }
 
 export class Planet extends Entity {
@@ -1377,5 +1560,23 @@ export class ShipLoader extends Entity {
   load(): Ship[] {
     let value = store.loadRelated(this._entity, this._id, this._field);
     return changetype<Ship[]>(value);
+  }
+}
+
+export class InvitationLoader extends Entity {
+  _entity: string;
+  _field: string;
+  _id: string;
+
+  constructor(entity: string, id: string, field: string) {
+    super();
+    this._entity = entity;
+    this._id = id;
+    this._field = field;
+  }
+
+  load(): Invitation[] {
+    let value = store.loadRelated(this._entity, this._id, this._field);
+    return changetype<Invitation[]>(value);
   }
 }

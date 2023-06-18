@@ -79,6 +79,16 @@ dataSources:
           handler: handleShipsStartedCrafting
         - event: shipsFinishedCrafting(uint256)
           handler: handleShipsFinishedCrafting
+        - event: allianceCreated(indexed bytes32,indexed address,indexed uint256)
+          handler: handleJoinedAlliance
+        - event: invitedToAlliance(indexed bytes32,indexed address,indexed uint256)
+          handler: handleInvitedToAlliance
+        - event: joinedAlliance(indexed bytes32,indexed address,indexed uint256)
+          handler: handleJoinedAlliance(indexed bytes32,indexed address,indexed uint256)
+        - event: leavingAlliance(indexed bytes32,indexed address,indexed uint256)
+          handler: handleLeavingAlliance
+        - event: changedAllianceOwner(indexed bytes32,indexed address,indexed uint256)
+          handler: handleChangedAllianceOwner
   - kind: ethereum/contract
     name: ShipContract
     network: mumbai
