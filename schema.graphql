@@ -32,7 +32,7 @@ type Planet @entity {
   pvpEnabled: Boolean
   miningLastClaimed: BigInt!
   buildings: [BigInt!]!
-  ships: [Ship!]! @derivedFrom(field: "planet") # Add this line
+  ships: [Ship!]! @derivedFrom(field: "planet")
   craftingBuilding: CraftBuilding
   craftingShip: CraftShip
 }

@@ -55,7 +55,7 @@ export function handlePlayerRegistered(
   player.address = event.params.playerAddress.toHexString();
   player.faction = event.params.faction;
   player.save();
-  updatePlanets(event.address);
+  //updatePlanets(event.address); //@notice, not necessary, since the NFT transfer already triggers it automatically (double work)
 }
 
 export function handleGenesis(event: GENESIS): void {
@@ -260,7 +260,6 @@ export function handleShipTransfer(event: ShipTransfer): void {
 
   let diamondContract = DiamondContract.bind(contractAddress);
 
-  let contract = ShipContract.bind(event.address);
   let shipData = diamondContract.getShipTypeStats(
     event.params.tokenId
   );
