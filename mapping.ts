@@ -71,7 +71,7 @@ export function handleTransfer(event: Transfer): void {
 
 function updatePlanets(contractAddress: Address): void {
   let planetContractAddress =
-    "0x42ae07ee09001ABcE5372F75d0E12f9B31957149"; // Replace with the correct address
+    "0x251f9F3E74a8c7d52a5AE221A5Ec9047f96bA513"; // Replace with the correct address
 
   let planetContract = PlanetContract.bind(
     Address.fromString(planetContractAddress)
@@ -344,6 +344,11 @@ export function handleBuildingsFinishedCrafting(
         craftBuilding.isActive = false;
         craftBuilding.save();
       }
+
+      // Add finished building to the list of buildings on the planet
+      let buildings = planet.buildings;
+      buildings.push(craftBuilding!.itemId);
+      planet.buildings = buildings;
     }
     planet.craftingBuilding = null;
     planet.save();
