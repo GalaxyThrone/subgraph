@@ -65,7 +65,7 @@ type Ship @entity {
   name: String!
   moduleSlots: BigInt!
   owner: Player! # Association to the Player that owns the ship
-  planet: Planet! # Association to the Planet that the ship is associated with, WIP till next redeploy
+  planet: Planet # Association to the Planet that the ship is associated with, WIP till next redeploy
 }
 
 type Attack @entity {

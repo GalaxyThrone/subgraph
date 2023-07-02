@@ -90,6 +90,8 @@ dataSources:
           handler: handleLeavingAlliance
         - event: changedAllianceOwner(indexed bytes32,indexed address,indexed uint256)
           handler: handleChangedAllianceOwner
+        - event: miningConcluded(uint256)
+          handler: updateMinedPlanet
   - kind: ethereum/contract
     name: ShipContract
     network: mumbai

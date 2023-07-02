@@ -789,6 +789,19 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "planetId",
+        "type": "uint256"
+      }
+    ],
+    "name": "miningConcluded",
+    "type": "event"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",

@@ -816,17 +816,21 @@ export class Ship extends Entity {
     this.set("owner", Value.fromString(value));
   }
 
-  get planet(): string {
+  get planet(): string | null {
     let value = this.get("planet");
     if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
+      return null;
     } else {
       return value.toString();
     }
   }
 
-  set planet(value: string) {
-    this.set("planet", Value.fromString(value));
+  set planet(value: string | null) {
+    if (!value) {
+      this.unset("planet");
+    } else {
+      this.set("planet", Value.fromString(<string>value));
+    }
   }
 }
 

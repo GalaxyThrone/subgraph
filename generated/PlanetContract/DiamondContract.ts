@@ -190,6 +190,24 @@ export class buildingsStartedCrafting__Params {
   }
 }
 
+export class miningConcluded extends ethereum.Event {
+  get params(): miningConcluded__Params {
+    return new miningConcluded__Params(this);
+  }
+}
+
+export class miningConcluded__Params {
+  _event: miningConcluded;
+
+  constructor(event: miningConcluded) {
+    this._event = event;
+  }
+
+  get planetId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
 export class DiamondCut extends ethereum.Event {
   get params(): DiamondCut__Params {
     return new DiamondCut__Params(this);

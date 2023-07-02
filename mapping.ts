@@ -17,6 +17,7 @@ import {
   changedAllianceOwner,
   leavingAlliance,
   invitedToAlliance,
+  miningConcluded,
 } from "./generated/DiamondContract/DiamondContract";
 import {
   PlanetContract,
@@ -80,7 +81,7 @@ function updatePlanet(event: Transfer): void {
   let planetContract = PlanetContract.bind(
     Address.fromString(PLANET_CONTRACT_ADDRESS)
   );
-  let planetData = planetContract.planets(BigInt.fromI32(planetId));
+
   let owner = planetContract.ownerOf(BigInt.fromI32(planetId));
 
   let resources: BigInt[] = [];
@@ -93,14 +94,23 @@ function updatePlanet(event: Transfer): void {
     );
   }
 
-  let planet = new Planet(planetId.toString());
-  planet.planetId = planetId;
-  planet.planetType = diamondContract.getPlanetType(
+  let planet = Planet.load(planetId.toString());
+  if (planet == null) {
+    log.error("Planet not found!", []);
+    return;
+  }
+
+  planet.pvpEnabled = planetContract
+    .planets(BigInt.fromI32(planetId))
+    .getPvpEnabled();
+  planet.miningLastClaimed = diamondContract.getLastClaimed(
     BigInt.fromI32(planetId)
   );
-  let player = Player.load(owner.toHex());
-  planet.owner = player ? player.id : null;
-  planet.pvpEnabled = planetData.getPvpEnabled();
+  planet.buildings = diamondContract.getAllBuildings(
+    BigInt.fromI32(planetId)
+  );
+
+  let planetData = planetContract.planets(BigInt.fromI32(planetId));
 
   let planetResourcesUnmined = new PlanetResource(
     planetId.toString()
@@ -120,12 +130,71 @@ function updatePlanet(event: Transfer): void {
   planetResourcesAvailable.save();
   planet.planetResourcesAvailable = planetResourcesAvailable.id;
 
+  let player = Player.load(owner.toHex());
+  planet.owner = player ? player.id : null;
+
+  planet.save();
+}
+
+function updatePlanetById(ID: BigInt): void {
+  let planetId = ID.toI32();
+  let diamondContract = DiamondContract.bind(
+    Address.fromString(DIAMOND_CONTRACT_ADDRESS)
+  );
+  let planetContract = PlanetContract.bind(
+    Address.fromString(PLANET_CONTRACT_ADDRESS)
+  );
+
+  let owner = planetContract.ownerOf(BigInt.fromI32(planetId));
+
+  let resources: BigInt[] = [];
+  for (let i = 0; i < 3; i++) {
+    resources.push(
+      diamondContract.getPlanetResources(
+        BigInt.fromI32(planetId),
+        BigInt.fromI32(i)
+      )
+    );
+  }
+
+  let planet = Planet.load(planetId.toString());
+  if (planet == null) {
+    log.error("Planet not found!", []);
+    return;
+  }
+
+  planet.pvpEnabled = planetContract
+    .planets(BigInt.fromI32(planetId))
+    .getPvpEnabled();
   planet.miningLastClaimed = diamondContract.getLastClaimed(
     BigInt.fromI32(planetId)
   );
   planet.buildings = diamondContract.getAllBuildings(
     BigInt.fromI32(planetId)
   );
+
+  let planetData = planetContract.planets(BigInt.fromI32(planetId));
+
+  let planetResourcesUnmined = new PlanetResource(
+    planetId.toString()
+  );
+  planetResourcesUnmined.antimatter = planetData.getAntimatter();
+  planetResourcesUnmined.metal = planetData.getMetal();
+  planetResourcesUnmined.crystal = planetData.getCrystal();
+  planetResourcesUnmined.save();
+  planet.planetResourcesUnmined = planetResourcesUnmined.id;
+
+  let planetResourcesAvailable = new PlanetResourceAvailable(
+    planetId.toString()
+  );
+  planetResourcesAvailable.metal = resources[0];
+  planetResourcesAvailable.crystal = resources[1];
+  planetResourcesAvailable.antimatter = resources[2];
+  planetResourcesAvailable.save();
+  planet.planetResourcesAvailable = planetResourcesAvailable.id;
+
+  let player = Player.load(owner.toHex());
+  planet.owner = player ? player.id : null;
 
   planet.save();
 }
@@ -219,8 +288,20 @@ export function handleAttackSent(event: AttackSent): void {
   let contract = DiamondContract.bind(event.address);
   let attackStatus = contract.getAttackStatus(event.params.id);
 
+  let attackerShips = attackStatus.attackerShipsIds as BigInt[];
+
+  // Iterate over each ship ID and update the planet
+  for (let i = 0; i < attackerShips.length; i++) {
+    let ship = Ship.load(attackerShips[i].toString());
+    if (ship != null) {
+      // Check if the ship exists
+      ship.planet = null; // Set planet to null as the ship is in transit
+      ship.save();
+    }
+  }
+
   let attack = new Attack(event.params.id.toString());
-  attack.attackerShips = attackStatus.attackerShipsIds as BigInt[];
+  attack.attackerShips = attackerShips;
   attack.fromPlanet = attackStatus.fromPlanet;
   attack.toPlanet = attackStatus.toPlanet;
   attack.attackerAddress = attackStatus.attacker.toHexString();
@@ -238,10 +319,22 @@ export function handleSendTerraformer(event: SendTerraformer): void {
     event.params.instanceId
   );
 
+  let attackerShips = terraformInstance.shipsIds as BigInt[];
+
+  // Iterate over each ship ID and update the planet
+  for (let i = 0; i < attackerShips.length; i++) {
+    let ship = Ship.load(attackerShips[i].toString());
+    if (ship != null) {
+      // Check if the ship exists
+      ship.planet = null; // Set planet to null as the ship is in transit
+      ship.save();
+    }
+  }
+
   let terraforming = new Terraforming(
     event.params.instanceId.toString()
   );
-  terraforming.attackerShips = terraformInstance.shipsIds as BigInt[];
+  terraforming.attackerShips = attackerShips;
   terraforming.fromPlanet = terraformInstance.fromPlanetId;
   terraforming.toPlanet = event.params.toPlanet;
   terraforming.startTime = terraformInstance.timestamp;
@@ -263,8 +356,20 @@ export function handleStartOutMining(event: StartOutMining): void {
     event.params.id
   );
 
+  let attackerShips = outminingInstance.shipsIds as BigInt[];
+
+  // Iterate over each ship ID and update the planet
+  for (let i = 0; i < attackerShips.length; i++) {
+    let ship = Ship.load(attackerShips[i].toString());
+    if (ship != null) {
+      // Check if the ship exists
+      ship.planet = null; // Set planet to null as the ship is in transit
+      ship.save();
+    }
+  }
+
   let outmining = new Outmining(event.params.id.toString());
-  outmining.attackerShips = outminingInstance.shipsIds as BigInt[];
+  outmining.attackerShips = attackerShips;
   outmining.fromPlanet = outminingInstance.fromPlanetId;
   outmining.toPlanet = outminingInstance.toPlanetId;
   outmining.senderAddress = event.params.sender.toHexString();
@@ -285,7 +390,9 @@ export function handlePlanetConquered(event: planetConquered): void {
 
 export function handleAttackLost(event: attackLost): void {
   let attack = Attack.load(event.params.id.toString());
+
   if (attack != null) {
+    updatePlanetById(attack.toPlanet);
     attack.resolved = true;
     attack.save();
   }
@@ -298,6 +405,7 @@ export function handleResolvedOutmining(
   let outmining = Outmining.load(outminingId);
 
   if (outmining != null) {
+    updatePlanetById(outmining.fromPlanet);
     outmining.resolved = true;
     outmining.save();
   }
@@ -544,4 +652,56 @@ export function handleInvitedToAlliance(
   invitation.alliance = alliance.id;
   invitation.timestamp = event.params.timestamp;
   invitation.save();
+}
+
+function updateMinedPlanet(event: miningConcluded): void {
+  let planetId = event.params.planetId.toI32();
+  let diamondContract = DiamondContract.bind(
+    Address.fromString(DIAMOND_CONTRACT_ADDRESS)
+  );
+  let planetContract = PlanetContract.bind(
+    Address.fromString(PLANET_CONTRACT_ADDRESS)
+  );
+
+  let owner = planetContract.ownerOf(BigInt.fromI32(planetId));
+
+  let resources: BigInt[] = [];
+  for (let i = 0; i < 3; i++) {
+    resources.push(
+      diamondContract.getPlanetResources(
+        BigInt.fromI32(planetId),
+        BigInt.fromI32(i)
+      )
+    );
+  }
+
+  let planet = Planet.load(planetId.toString());
+  if (planet == null) {
+    log.error("Planet not found! At Event miningConcluded", []);
+    return;
+  }
+  let planetData = planetContract.planets(BigInt.fromI32(planetId));
+
+  let planetResourcesUnmined = new PlanetResource(
+    planetId.toString()
+  );
+  planetResourcesUnmined.antimatter = planetData.getAntimatter();
+  planetResourcesUnmined.metal = planetData.getMetal();
+  planetResourcesUnmined.crystal = planetData.getCrystal();
+  planetResourcesUnmined.save();
+  planet.planetResourcesUnmined = planetResourcesUnmined.id;
+
+  let planetResourcesAvailable = new PlanetResourceAvailable(
+    planetId.toString()
+  );
+  planetResourcesAvailable.metal = resources[0];
+  planetResourcesAvailable.crystal = resources[1];
+  planetResourcesAvailable.antimatter = resources[2];
+  planetResourcesAvailable.save();
+  planet.planetResourcesAvailable = planetResourcesAvailable.id;
+
+  let player = Player.load(owner.toHex());
+  planet.owner = player ? player.id : null;
+
+  planet.save();
 }
