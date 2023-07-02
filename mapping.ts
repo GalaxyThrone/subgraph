@@ -47,10 +47,10 @@ import {
 import { Ship } from "./generated/schema";
 
 const DIAMOND_CONTRACT_ADDRESS: string =
-  "0xFf3D0Eb942a847966fc63942E6dc954c98D321De";
+  "0x5768567A2Fe9d3FeEC725d543774eC40efB0b16E";
 
 const PLANET_CONTRACT_ADDRESS: string =
-  "0x251f9F3E74a8c7d52a5AE221A5Ec9047f96bA513";
+  "0x3418a2416C81a3344A1DfC8D2161C0A47fD8D50d";
 
 export function handlePlayerRegistered(
   event: playerRegistered
