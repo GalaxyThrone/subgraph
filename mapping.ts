@@ -48,6 +48,9 @@ import { Ship } from "./generated/schema";
 const DIAMOND_CONTRACT_ADDRESS: string =
   "0xFf3D0Eb942a847966fc63942E6dc954c98D321De";
 
+const PLANET_CONTRACT_ADDRESS: string =
+  "0x251f9F3E74a8c7d52a5AE221A5Ec9047f96bA513";
+
 export function handlePlayerRegistered(
   event: playerRegistered
 ): void {
@@ -66,17 +69,74 @@ export function handleTransfer(event: Transfer): void {
   let contractAddress = Address.fromString(DIAMOND_CONTRACT_ADDRESS);
 
   log.info("Actually updating transfer", []);
-  updatePlanets(contractAddress);
+  updatePlanet(event);
+}
+
+function updatePlanet(event: Transfer): void {
+  let planetId = event.params.tokenId.toI32();
+  let diamondContract = DiamondContract.bind(
+    Address.fromString(DIAMOND_CONTRACT_ADDRESS)
+  );
+  let planetContract = PlanetContract.bind(
+    Address.fromString(PLANET_CONTRACT_ADDRESS)
+  );
+  let planetData = planetContract.planets(BigInt.fromI32(planetId));
+  let owner = planetContract.ownerOf(BigInt.fromI32(planetId));
+
+  let resources: BigInt[] = [];
+  for (let i = 0; i < 3; i++) {
+    resources.push(
+      diamondContract.getPlanetResources(
+        BigInt.fromI32(planetId),
+        BigInt.fromI32(i)
+      )
+    );
+  }
+
+  let planet = new Planet(planetId.toString());
+  planet.planetId = planetId;
+  planet.planetType = diamondContract.getPlanetType(
+    BigInt.fromI32(planetId)
+  );
+  let player = Player.load(owner.toHex());
+  planet.owner = player ? player.id : null;
+  planet.pvpEnabled = planetData.getPvpEnabled();
+
+  let planetResourcesUnmined = new PlanetResource(
+    planetId.toString()
+  );
+  planetResourcesUnmined.antimatter = planetData.getAntimatter();
+  planetResourcesUnmined.metal = planetData.getMetal();
+  planetResourcesUnmined.crystal = planetData.getCrystal();
+  planetResourcesUnmined.save();
+  planet.planetResourcesUnmined = planetResourcesUnmined.id;
+
+  let planetResourcesAvailable = new PlanetResourceAvailable(
+    planetId.toString()
+  );
+  planetResourcesAvailable.metal = resources[0];
+  planetResourcesAvailable.crystal = resources[1];
+  planetResourcesAvailable.antimatter = resources[2];
+  planetResourcesAvailable.save();
+  planet.planetResourcesAvailable = planetResourcesAvailable.id;
+
+  planet.miningLastClaimed = diamondContract.getLastClaimed(
+    BigInt.fromI32(planetId)
+  );
+  planet.buildings = diamondContract.getAllBuildings(
+    BigInt.fromI32(planetId)
+  );
+
+  planet.save();
 }
 
 function updatePlanets(contractAddress: Address): void {
-  let planetContractAddress =
-    "0x251f9F3E74a8c7d52a5AE221A5Ec9047f96bA513"; // Replace with the correct address
-
   let planetContract = PlanetContract.bind(
-    Address.fromString(planetContractAddress)
+    Address.fromString(PLANET_CONTRACT_ADDRESS)
   );
-  let diamondContract = DiamondContract.bind(contractAddress);
+  let diamondContract = DiamondContract.bind(
+    Address.fromString(DIAMOND_CONTRACT_ADDRESS)
+  );
 
   let planetsTotalSupply = planetContract.totalSupply();
 
