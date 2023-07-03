@@ -100,6 +100,14 @@ function updatePlanet(event: Transfer): void {
     return;
   }
 
+  planet.planetType = diamondContract.getPlanetType(
+    BigInt.fromI32(planetId)
+  );
+
+  log.info("Actually saved planet type: {}", [
+    planet.planetType.toString(),
+  ]);
+
   planet.pvpEnabled = planetContract
     .planets(BigInt.fromI32(planetId))
     .getPvpEnabled();
@@ -500,6 +508,10 @@ export function handleBuildingsStartedCrafting(
 export function handleBuildingsFinishedCrafting(
   event: buildingsFinishedCrafting
 ): void {
+  let diamondContract = DiamondContract.bind(
+    Address.fromString(DIAMOND_CONTRACT_ADDRESS)
+  );
+
   let planet = Planet.load(event.params.planetId.toI32().toString());
   if (planet != null) {
     let craftBuildingId = planet.craftingBuilding;
@@ -512,10 +524,9 @@ export function handleBuildingsFinishedCrafting(
         craftBuilding.save();
       }
 
-      // Add finished building to the list of buildings on the planet
-      let buildings = planet.buildings;
-      buildings.push(craftBuilding!.itemId);
-      planet.buildings = buildings;
+      planet.buildings = diamondContract.getAllBuildings(
+        event.params.planetId
+      );
     }
     planet.craftingBuilding = null;
     planet.save();
