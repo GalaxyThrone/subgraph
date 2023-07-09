@@ -241,11 +241,15 @@ function updatePlanets(contractAddress: Address): void {
     let planet = new Planet(i.toString());
     planet.planetId = i;
 
-    planet.name = planetNames[i];
-
     planet.planetType = diamondContract.getPlanetType(
       BigInt.fromI32(i)
     );
+
+    if (planet.planetType.toI32() === 1) {
+      planet.name = `${planetNames[i]} Belt System`;
+    } else {
+      planet.name = planetNames[i];
+    }
 
     log.info("Updating planet type: {}", [
       diamondContract.getPlanetType(BigInt.fromI32(i)).toString(),
