@@ -107,6 +107,8 @@ dataSources:
       abis:
         - name: ShipContract
           file: ./abis/ShipContract.json
+        - name: DiamondContract
+          file: ./abis/DiamondContract.json
       file: ./mapping.ts
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)

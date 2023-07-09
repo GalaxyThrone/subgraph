@@ -452,6 +452,19 @@ export class Planet extends Entity {
       this.set("craftingShip", Value.fromString(<string>value));
     }
   }
+
+  get name(): string {
+    let value = this.get("name");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
 }
 
 export class PlanetResource extends Entity {

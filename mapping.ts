@@ -22,8 +22,8 @@ import {
 import {
   PlanetContract,
   Transfer,
-} from "./generated/PlanetContract/PlanetContract"; // <-- Add this
-import { DiamondContract } from "./generated/DiamondContract/DiamondContract"; // <-- Add this
+} from "./generated/PlanetContract/PlanetContract";
+import { DiamondContract } from "./generated/DiamondContract/DiamondContract";
 import {
   Alliance,
   Attack,
@@ -45,6 +45,7 @@ import {
   Transfer as ShipTransfer,
 } from "./generated/ShipContract/ShipContract";
 import { Ship } from "./generated/schema";
+import { planetNames } from "./planetNames";
 
 const DIAMOND_CONTRACT_ADDRESS: string =
   "0xd26749481d0A9C059F33afE7937aE6D50af2D7a6";
@@ -239,6 +240,8 @@ function updatePlanets(contractAddress: Address): void {
 
     let planet = new Planet(i.toString());
     planet.planetId = i;
+
+    planet.name = planetNames[i];
 
     planet.planetType = diamondContract.getPlanetType(
       BigInt.fromI32(i)

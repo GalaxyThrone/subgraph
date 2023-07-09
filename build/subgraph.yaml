@@ -108,6 +108,8 @@ dataSources:
       abis:
         - name: ShipContract
           file: ShipContract\abis\ShipContract.json
+        - name: DiamondContract
+          file: ShipContract\abis\DiamondContract.json
       file: PlanetContract\PlanetContract.wasm
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)

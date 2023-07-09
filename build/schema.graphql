@@ -35,6 +35,7 @@ type Planet @entity {
   ships: [Ship!]! @derivedFrom(field: "planet")
   craftingBuilding: CraftBuilding
   craftingShip: CraftShip
+  name: String!
 }
 
 type PlanetResource @entity {
