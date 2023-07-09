@@ -10,7 +10,7 @@ dataSources:
     source:
       address: "0xdd632880684AB8c66F2C43906f08DD51915B5dfe"
       abi: PlanetContract
-      startBlock: 36960578
+      startBlock: 37522140
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -34,7 +34,7 @@ dataSources:
     source:
       address: "0xd26749481d0A9C059F33afE7937aE6D50af2D7a6"
       abi: DiamondContract
-      startBlock: 36960578
+      startBlock: 37522140
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -98,7 +98,7 @@ dataSources:
     source:
       address: "0x77B9D814ADcd0cb068033561846DBa7b7de665D3"
       abi: ShipContract
-      startBlock: 36683271
+      startBlock: 37522140
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

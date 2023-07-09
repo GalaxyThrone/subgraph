@@ -443,7 +443,7 @@ export function handleShipTransfer(event: ShipTransfer): void {
 
   let diamondContract = DiamondContract.bind(contractAddress);
 
-  let shipData = diamondContract.getShipTypeStats(
+  let shipData = diamondContract.getShipStatsDiamond(
     event.params.tokenId
   );
 
