@@ -250,6 +250,66 @@
     {
         "inputs": [
             {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "techId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "shipTypeId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256[4]",
+                        "name": "price",
+                        "type": "uint256[4]"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "cooldown",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "hpBuff",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256[3]",
+                        "name": "attackBoostStat",
+                        "type": "uint256[3]"
+                    },
+                    {
+                        "internalType": "uint256[3]",
+                        "name": "defenseBoostStat",
+                        "type": "uint256[3]"
+                    },
+                    {
+                        "internalType": "uint256[2]",
+                        "name": "preRequisiteTech",
+                        "type": "uint256[2]"
+                    }
+                ],
+                "internalType": "struct TechTreeUpdate",
+                "name": "_newTechTree",
+                "type": "tuple"
+            }
+        ],
+        "name": "initalizeShipTechTree",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "address",
                 "name": "",
                 "type": "address"
@@ -398,6 +458,19 @@
             }
         ],
         "name": "setAddresses",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_newMaxCount",
+                "type": "uint256"
+            }
+        ],
+        "name": "setupMaxTechResearch",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -1481,6 +1554,19 @@
         "inputs": [
             {
                 "indexed": false,
+                "internalType": "int256",
+                "name": "result",
+                "type": "int256"
+            }
+        ],
+        "name": "BattleResult",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
                 "internalType": "uint256",
                 "name": "id",
                 "type": "uint256"
@@ -1962,6 +2048,118 @@
         "anonymous": false,
         "inputs": [
             {
+                "indexed": false,
+                "internalType": "address",
+                "name": "playerAddress",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "newName",
+                "type": "string"
+            }
+        ],
+        "name": "playerNameChosen",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "techId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "playerAddress",
+                "type": "address"
+            }
+        ],
+        "name": "techResearched",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_techIdToResearch",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_researchBasePlanet",
+                "type": "uint256"
+            }
+        ],
+        "name": "researchTech",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_playerNameToGet",
+                "type": "address"
+            }
+        ],
+        "name": "returnPlayerName",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_techIdToCheckStatus",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "_playerAddr",
+                "type": "address"
+            }
+        ],
+        "name": "returnPlayerResearchedTech",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_newPlayerName",
+                "type": "string"
+            }
+        ],
+        "name": "setPlayername",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
                 "indexed": true,
                 "internalType": "address",
                 "name": "previousOwner",
@@ -2240,30 +2438,6 @@
         ],
         "name": "shipsStartedCrafting",
         "type": "event"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "cargo",
-                "type": "uint256"
-            },
-            {
-                "internalType": "bool",
-                "name": "isAsteroidbelt",
-                "type": "bool"
-            }
-        ],
-        "name": "calculateMinedResourceAmount",
-        "outputs": [
-            {
-                "internalType": "uint256[]",
-                "name": "",
-                "type": "uint256[]"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
     },
     {
         "inputs": [
@@ -3011,19 +3185,6 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_shipId",
-                "type": "uint256"
-            }
-        ],
-        "name": "levelShip",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
     },
     {

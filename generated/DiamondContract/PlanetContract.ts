@@ -1007,10 +1007,6 @@ export class PlanetConquestTransferCall__Inputs {
   get _newOwner(): Address {
     return this._call.inputValues[2].value.toAddress();
   }
-
-  get _attackIdResolved(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
 }
 
 export class PlanetConquestTransferCall__Outputs {

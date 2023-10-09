@@ -542,11 +542,6 @@
         "internalType": "address",
         "name": "_newOwner",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_attackIdResolved",
-        "type": "uint256"
       }
     ],
     "name": "planetConquestTransfer",

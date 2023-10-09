@@ -276,6 +276,24 @@ export class AttackSent__Params {
   }
 }
 
+export class BattleResult extends ethereum.Event {
+  get params(): BattleResult__Params {
+    return new BattleResult__Params(this);
+  }
+}
+
+export class BattleResult__Params {
+  _event: BattleResult;
+
+  constructor(event: BattleResult) {
+    this._event = event;
+  }
+
+  get result(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
 export class attackLost extends ethereum.Event {
   get params(): attackLost__Params {
     return new attackLost__Params(this);
@@ -329,6 +347,50 @@ export class planetConquered__Params {
 
   get newOwner(): Address {
     return this._event.parameters[3].value.toAddress();
+  }
+}
+
+export class playerNameChosen extends ethereum.Event {
+  get params(): playerNameChosen__Params {
+    return new playerNameChosen__Params(this);
+  }
+}
+
+export class playerNameChosen__Params {
+  _event: playerNameChosen;
+
+  constructor(event: playerNameChosen) {
+    this._event = event;
+  }
+
+  get playerAddress(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newName(): string {
+    return this._event.parameters[1].value.toString();
+  }
+}
+
+export class techResearched extends ethereum.Event {
+  get params(): techResearched__Params {
+    return new techResearched__Params(this);
+  }
+}
+
+export class techResearched__Params {
+  _event: techResearched;
+
+  constructor(event: techResearched) {
+    this._event = event;
+  }
+
+  get techId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get playerAddress(): Address {
+    return this._event.parameters[1].value.toAddress();
   }
 }
 
@@ -2445,6 +2507,64 @@ export class DiamondContract extends ethereum.SmartContract {
     );
   }
 
+  returnPlayerName(_playerNameToGet: Address): string {
+    let result = super.call(
+      "returnPlayerName",
+      "returnPlayerName(address):(string)",
+      [ethereum.Value.fromAddress(_playerNameToGet)]
+    );
+
+    return result[0].toString();
+  }
+
+  try_returnPlayerName(_playerNameToGet: Address): ethereum.CallResult<string> {
+    let result = super.tryCall(
+      "returnPlayerName",
+      "returnPlayerName(address):(string)",
+      [ethereum.Value.fromAddress(_playerNameToGet)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toString());
+  }
+
+  returnPlayerResearchedTech(
+    _techIdToCheckStatus: BigInt,
+    _playerAddr: Address
+  ): boolean {
+    let result = super.call(
+      "returnPlayerResearchedTech",
+      "returnPlayerResearchedTech(uint256,address):(bool)",
+      [
+        ethereum.Value.fromUnsignedBigInt(_techIdToCheckStatus),
+        ethereum.Value.fromAddress(_playerAddr)
+      ]
+    );
+
+    return result[0].toBoolean();
+  }
+
+  try_returnPlayerResearchedTech(
+    _techIdToCheckStatus: BigInt,
+    _playerAddr: Address
+  ): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "returnPlayerResearchedTech",
+      "returnPlayerResearchedTech(uint256,address):(bool)",
+      [
+        ethereum.Value.fromUnsignedBigInt(_techIdToCheckStatus),
+        ethereum.Value.fromAddress(_playerAddr)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
   owner(): Address {
     let result = super.call("owner", "owner():(address)", []);
 
@@ -2502,41 +2622,6 @@ export class DiamondContract extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
-  calculateMinedResourceAmount(
-    cargo: BigInt,
-    isAsteroidbelt: boolean
-  ): Array<BigInt> {
-    let result = super.call(
-      "calculateMinedResourceAmount",
-      "calculateMinedResourceAmount(uint256,bool):(uint256[])",
-      [
-        ethereum.Value.fromUnsignedBigInt(cargo),
-        ethereum.Value.fromBoolean(isAsteroidbelt)
-      ]
-    );
-
-    return result[0].toBigIntArray();
-  }
-
-  try_calculateMinedResourceAmount(
-    cargo: BigInt,
-    isAsteroidbelt: boolean
-  ): ethereum.CallResult<Array<BigInt>> {
-    let result = super.tryCall(
-      "calculateMinedResourceAmount",
-      "calculateMinedResourceAmount(uint256,bool):(uint256[])",
-      [
-        ethereum.Value.fromUnsignedBigInt(cargo),
-        ethereum.Value.fromBoolean(isAsteroidbelt)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
   calculatePercentage(amount: BigInt, percentage: BigInt): BigInt {
@@ -3505,6 +3590,76 @@ export class DrawRandomAttackSeedCall__Outputs {
   }
 }
 
+export class InitalizeShipTechTreeCall extends ethereum.Call {
+  get inputs(): InitalizeShipTechTreeCall__Inputs {
+    return new InitalizeShipTechTreeCall__Inputs(this);
+  }
+
+  get outputs(): InitalizeShipTechTreeCall__Outputs {
+    return new InitalizeShipTechTreeCall__Outputs(this);
+  }
+}
+
+export class InitalizeShipTechTreeCall__Inputs {
+  _call: InitalizeShipTechTreeCall;
+
+  constructor(call: InitalizeShipTechTreeCall) {
+    this._call = call;
+  }
+
+  get _newTechTree(): InitalizeShipTechTreeCall_newTechTreeStruct {
+    return changetype<InitalizeShipTechTreeCall_newTechTreeStruct>(
+      this._call.inputValues[0].value.toTuple()
+    );
+  }
+}
+
+export class InitalizeShipTechTreeCall__Outputs {
+  _call: InitalizeShipTechTreeCall;
+
+  constructor(call: InitalizeShipTechTreeCall) {
+    this._call = call;
+  }
+}
+
+export class InitalizeShipTechTreeCall_newTechTreeStruct extends ethereum.Tuple {
+  get techId(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get name(): string {
+    return this[1].toString();
+  }
+
+  get shipTypeId(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get price(): Array<BigInt> {
+    return this[3].toBigIntArray();
+  }
+
+  get cooldown(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get hpBuff(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get attackBoostStat(): Array<BigInt> {
+    return this[6].toBigIntArray();
+  }
+
+  get defenseBoostStat(): Array<BigInt> {
+    return this[7].toBigIntArray();
+  }
+
+  get preRequisiteTech(): Array<BigInt> {
+    return this[8].toBigIntArray();
+  }
+}
+
 export class OnERC1155BatchReceivedCall extends ethereum.Call {
   get inputs(): OnERC1155BatchReceivedCall__Inputs {
     return new OnERC1155BatchReceivedCall__Inputs(this);
@@ -3701,6 +3856,36 @@ export class SetAddressesCall__Outputs {
   _call: SetAddressesCall;
 
   constructor(call: SetAddressesCall) {
+    this._call = call;
+  }
+}
+
+export class SetupMaxTechResearchCall extends ethereum.Call {
+  get inputs(): SetupMaxTechResearchCall__Inputs {
+    return new SetupMaxTechResearchCall__Inputs(this);
+  }
+
+  get outputs(): SetupMaxTechResearchCall__Outputs {
+    return new SetupMaxTechResearchCall__Outputs(this);
+  }
+}
+
+export class SetupMaxTechResearchCall__Inputs {
+  _call: SetupMaxTechResearchCall;
+
+  constructor(call: SetupMaxTechResearchCall) {
+    this._call = call;
+  }
+
+  get _newMaxCount(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class SetupMaxTechResearchCall__Outputs {
+  _call: SetupMaxTechResearchCall;
+
+  constructor(call: SetupMaxTechResearchCall) {
     this._call = call;
   }
 }
@@ -4301,6 +4486,70 @@ export class SendFriendliesCall__Outputs {
   }
 }
 
+export class ResearchTechCall extends ethereum.Call {
+  get inputs(): ResearchTechCall__Inputs {
+    return new ResearchTechCall__Inputs(this);
+  }
+
+  get outputs(): ResearchTechCall__Outputs {
+    return new ResearchTechCall__Outputs(this);
+  }
+}
+
+export class ResearchTechCall__Inputs {
+  _call: ResearchTechCall;
+
+  constructor(call: ResearchTechCall) {
+    this._call = call;
+  }
+
+  get _techIdToResearch(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _researchBasePlanet(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class ResearchTechCall__Outputs {
+  _call: ResearchTechCall;
+
+  constructor(call: ResearchTechCall) {
+    this._call = call;
+  }
+}
+
+export class SetPlayernameCall extends ethereum.Call {
+  get inputs(): SetPlayernameCall__Inputs {
+    return new SetPlayernameCall__Inputs(this);
+  }
+
+  get outputs(): SetPlayernameCall__Outputs {
+    return new SetPlayernameCall__Outputs(this);
+  }
+}
+
+export class SetPlayernameCall__Inputs {
+  _call: SetPlayernameCall;
+
+  constructor(call: SetPlayernameCall) {
+    this._call = call;
+  }
+
+  get _newPlayerName(): string {
+    return this._call.inputValues[0].value.toString();
+  }
+}
+
+export class SetPlayernameCall__Outputs {
+  _call: SetPlayernameCall;
+
+  constructor(call: SetPlayernameCall) {
+    this._call = call;
+  }
+}
+
 export class TransferOwnershipCall extends ethereum.Call {
   get inputs(): TransferOwnershipCall__Inputs {
     return new TransferOwnershipCall__Inputs(this);
@@ -4493,36 +4742,6 @@ export class EquipShipModuleCall__Outputs {
   _call: EquipShipModuleCall;
 
   constructor(call: EquipShipModuleCall) {
-    this._call = call;
-  }
-}
-
-export class LevelShipCall extends ethereum.Call {
-  get inputs(): LevelShipCall__Inputs {
-    return new LevelShipCall__Inputs(this);
-  }
-
-  get outputs(): LevelShipCall__Outputs {
-    return new LevelShipCall__Outputs(this);
-  }
-}
-
-export class LevelShipCall__Inputs {
-  _call: LevelShipCall;
-
-  constructor(call: LevelShipCall) {
-    this._call = call;
-  }
-
-  get _shipId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class LevelShipCall__Outputs {
-  _call: LevelShipCall;
-
-  constructor(call: LevelShipCall) {
     this._call = call;
   }
 }

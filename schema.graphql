@@ -6,6 +6,7 @@ type Player @entity {
   ships: [Ship!]! @derivedFrom(field: "owner") # Added this line
   alliance: String
   invitations: [Invitation!]! @derivedFrom(field: "invitee")
+  name: String
 }
 
 type Alliance @entity {

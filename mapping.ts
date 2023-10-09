@@ -46,12 +46,13 @@ import {
 } from "./generated/ShipContract/ShipContract";
 import { Ship } from "./generated/schema";
 import { planetNames } from "./planetNames";
+import { store } from "@graphprotocol/graph-ts";
 
 const DIAMOND_CONTRACT_ADDRESS: string =
-  "0xd26749481d0A9C059F33afE7937aE6D50af2D7a6";
+  "0x7433bA84BC33e45Feb51dF9f3bA92a89DcD10c55";
 
 const PLANET_CONTRACT_ADDRESS: string =
-  "0xdd632880684AB8c66F2C43906f08DD51915B5dfe";
+  "0xa401C0F90F9C11C4Ce9660b711874bA55C2f3D7C";
 
 export function handlePlayerRegistered(
   event: playerRegistered
@@ -105,10 +106,13 @@ function updatePlanet(event: Transfer): void {
     BigInt.fromI32(planetId)
   );
 
-  log.info("Actually saved planet type: {}", [
-    planet.planetType.toString(),
+  /*
+  log.info("Actually saved planet type for planetId: {}", [
+    planet.planetType.toString() +
+      " for planetId: " +
+      BigInt.fromI32(planetId).toString(),
   ]);
-
+  */
   planet.pvpEnabled = planetContract
     .planets(BigInt.fromI32(planetId))
     .getPvpEnabled();
@@ -437,11 +441,10 @@ export function handleResolvedTerraforming(
     terraforming.save();
   }
 }
-
 export function handleShipTransfer(event: ShipTransfer): void {
-  let contractAddress = Address.fromString(DIAMOND_CONTRACT_ADDRESS);
-
-  let diamondContract = DiamondContract.bind(contractAddress);
+  let diamondContract = DiamondContract.bind(
+    Address.fromString(DIAMOND_CONTRACT_ADDRESS)
+  );
 
   let shipData = diamondContract.getShipStatsDiamond(
     event.params.tokenId
@@ -461,22 +464,30 @@ export function handleShipTransfer(event: ShipTransfer): void {
   ship.name = shipData.name;
   ship.moduleSlots = shipData.moduleSlots;
 
-  let player = Player.load(event.params.to.toHexString());
-  if (player === null) {
-    player = new Player(event.params.to.toHexString());
-    player.address = event.params.to.toHexString();
-    // Assuming faction to be zero if player is not already registered
-    player.faction = BigInt.fromI32(0);
-    player.save();
+  let player = Player.load(
+    event.params.to.toHexString()
+  ) as Player | null;
+
+  if (player !== null) {
+    // The player entity exists, you can access its properties safely.
+    ship.owner = player.id;
+  } else {
+    let noOwnerPlayer = Player.load("no_owner");
+    if (noOwnerPlayer === null) {
+      noOwnerPlayer = new Player("no_owner");
+      noOwnerPlayer.address = "no_owner";
+      noOwnerPlayer.faction = BigInt.fromI32(0); // Or any other default
+      // Initialize other fields with default values
+      noOwnerPlayer.save();
+    }
+    ship.owner = "no_owner"; // Assigning the string directly
   }
 
-  ship.owner = player.id;
-
   // We need to identify which Planet the Ship is associated with and assign it to ship.planet
-  // @TODO new view function to check s.assignedPlanet[shipId];
   let planetId = diamondContract.checkShipAssignedPlanet(
     event.params.tokenId
   );
+
   let planet = Planet.load(planetId.toString());
   if (planet !== null) {
     ship.planet = planet.id;
@@ -672,7 +683,7 @@ export function handleInvitedToAlliance(
   invitation.save();
 }
 
-function updateMinedPlanet(event: miningConcluded): void {
+export function updateMinedPlanet(event: miningConcluded): void {
   let planetId = event.params.planetId.toI32();
   let diamondContract = DiamondContract.bind(
     Address.fromString(DIAMOND_CONTRACT_ADDRESS)
@@ -722,4 +733,34 @@ function updateMinedPlanet(event: miningConcluded): void {
   planet.owner = player ? player.id : null;
 
   planet.save();
+}
+
+export function workaroundPlanetRefresh(): void {
+  let diamondContract = DiamondContract.bind(
+    Address.fromString(DIAMOND_CONTRACT_ADDRESS)
+  );
+
+  // Array of planet IDs to update.
+  let planetIds = [4, 69, 144, 175];
+
+  // Loop through the array of planet IDs.
+  for (let i = 0; i < planetIds.length; i++) {
+    let planetId = planetIds[i];
+    let planet = Planet.load(planetId.toString());
+
+    // If the planet is null, it means the planet does not exist.
+    // In this case, we continue to the next iteration.
+    if (planet == null) {
+      continue;
+    }
+
+    // Convert planet id to BigInt.
+    let planetIdBigInt = BigInt.fromI32(planetId);
+
+    // Update planetType from the contract.
+    planet.planetType = diamondContract.getPlanetType(planetIdBigInt);
+
+    // Save updated Planet entity to the subgraph.
+    planet.save();
+  }
 }

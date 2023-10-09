@@ -8,9 +8,9 @@ dataSources:
     name: PlanetContract
     network: mumbai
     source:
-      address: "0xdd632880684AB8c66F2C43906f08DD51915B5dfe"
+      address: "0xa401C0F90F9C11C4Ce9660b711874bA55C2f3D7C"
       abi: PlanetContract
-      startBlock: 37522140
+      startBlock: 40228097
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -32,9 +32,9 @@ dataSources:
     name: DiamondContract
     network: mumbai
     source:
-      address: "0xd26749481d0A9C059F33afE7937aE6D50af2D7a6"
+      address: "0x7433bA84BC33e45Feb51dF9f3bA92a89DcD10c55"
       abi: DiamondContract
-      startBlock: 37522140
+      startBlock: 40228097
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -81,11 +81,11 @@ dataSources:
         - event: shipsFinishedCrafting(uint256)
           handler: handleShipsFinishedCrafting
         - event: allianceCreated(indexed bytes32,indexed address,indexed uint256)
-          handler: handleJoinedAlliance
+          handler: handleAllianceCreated
         - event: invitedToAlliance(indexed bytes32,indexed address,indexed uint256)
           handler: handleInvitedToAlliance
         - event: joinedAlliance(indexed bytes32,indexed address,indexed uint256)
-          handler: handleJoinedAlliance(indexed bytes32,indexed address,indexed uint256)
+          handler: handleJoinedAlliance
         - event: leavingAlliance(indexed bytes32,indexed address,indexed uint256)
           handler: handleLeavingAlliance
         - event: changedAllianceOwner(indexed bytes32,indexed address,indexed uint256)
@@ -96,9 +96,9 @@ dataSources:
     name: ShipContract
     network: mumbai
     source:
-      address: "0x77B9D814ADcd0cb068033561846DBa7b7de665D3"
+      address: "0xE8bB19586DCcb24fC33377C0109D1753064bf094"
       abi: ShipContract
-      startBlock: 37522140
+      startBlock: 40228097
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
